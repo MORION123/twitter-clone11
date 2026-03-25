@@ -60,13 +60,26 @@ function register() {
     window.location.href = 'feed.html';
 }
 
-// Проверка авторизации
-function checkAuth() {
-    const user = getCurrentUser();
-    if (!user && window.location.pathname.includes('feed.html')) {
-        window.location.href = 'index.html';
+// Настройка кнопки выхода (добавляем обработчик после загрузки страницы)
+function setupLogoutButton() {
+    const logoutBtn = document.getElementById('logoutBtn');
+    const logoutBtnProfile = document.getElementById('logoutBtnProfile');
+    
+    if (logoutBtn) {
+        logoutBtn.onclick = function(e) {
+            e.preventDefault();
+            logout();
+            return false;
+        };
     }
-    return user;
+    
+    if (logoutBtnProfile) {
+        logoutBtnProfile.onclick = function(e) {
+            e.preventDefault();
+            logout();
+            return false;
+        };
+    }
 }
 
 // Выход из аккаунта
@@ -75,5 +88,30 @@ function logout() {
     window.location.href = 'index.html';
 }
 
+// Проверка авторизации
+function checkAuth() {
+    const user = getCurrentUser();
+    if (!user && (window.location.pathname.includes('feed.html') || window.location.pathname.includes('profile.html'))) {
+        window.location.href = 'index.html';
+    }
+    return user;
+}
+
+// Обновление информации о пользователе на странице
+function updateUserDisplay() {
+    const user = getCurrentUser();
+    const userElements = document.querySelectorAll('#current-user');
+    userElements.forEach(el => {
+        if (el) el.textContent = user ? `@${user.username}` : '';
+    });
+}
+
 // Инициализация
 initStorage();
+
+// Настройка после загрузки страницы
+document.addEventListener('DOMContentLoaded', () => {
+    setupLogoutButton();
+    updateUserDisplay();
+    checkAuth();
+});
