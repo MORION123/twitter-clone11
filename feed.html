@@ -1,1 +1,70 @@
-
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitter Clone - Лента</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">🐦 TwitterClone</div>
+            <div class="nav-links">
+                <a href="feed.html" class="active">🏠 Лента</a>
+                <a href="#" onclick="logout()">🚪 Выход</a>
+            </div>
+            <div class="user-info">
+                <span id="current-user"></span>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="main-container">
+        <!-- Сайдбар -->
+        <aside class="sidebar">
+            <div class="profile-card">
+                <div id="profile-avatar" class="avatar-large"></div>
+                <h3 id="profile-name"></h3>
+                <p id="profile-bio"></p>
+                <div class="stats">
+                    <div><strong id="posts-count">0</strong> постов</div>
+                    <div><strong id="followers-count">0</strong> подписчиков</div>
+                    <div><strong id="following-count">0</strong> подписок</div>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Основной контент -->
+        <main class="main-content">
+            <!-- Форма создания поста -->
+            <div class="create-post">
+                <div class="post-input-container">
+                    <div class="avatar-small" id="post-avatar"></div>
+                    <textarea id="post-content" placeholder="Что нового?" rows="3"></textarea>
+                </div>
+                <div class="post-actions">
+                    <button class="btn-image" onclick="document.getElementById('post-image').click()">📷</button>
+                    <input type="file" id="post-image" accept="image/*" style="display: none">
+                    <button class="btn-post" onclick="createPost()">Опубликовать</button>
+                </div>
+                <div id="post-preview"></div>
+            </div>
+            
+            <!-- Лента постов -->
+            <div id="feed" class="feed"></div>
+        </main>
+        
+        <!-- Правый сайдбар -->
+        <aside class="sidebar-right">
+            <div class="suggestions">
+                <h3>Кого читать</h3>
+                <div id="suggestions-list"></div>
+            </div>
+        </aside>
+    </div>
+    
+    <script src="js/storage.js"></script>
+    <script src="js/feed.js"></script>
+</body>
+</html>
