@@ -60,7 +60,7 @@ function register() {
     window.location.href = 'feed.html';
 }
 
-// Проверка авторизации на странице ленты
+// Проверка авторизации
 function checkAuth() {
     const user = getCurrentUser();
     if (!user && window.location.pathname.includes('feed.html')) {
@@ -69,9 +69,9 @@ function checkAuth() {
     return user;
 }
 
-// Выход
+// Выход из аккаунта
 function logout() {
-    setCurrentUser(null);
+    localStorage.removeItem('twitter_current_user');
     window.location.href = 'index.html';
 }
 
