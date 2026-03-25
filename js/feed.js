@@ -14,20 +14,24 @@ function formatDate(timestamp) {
     return `${days} дн`;
 }
 
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
 function renderPost(post) {
     const user = findUserById(post.userId);
     if (!user) return '';
     
     const currentUser = getCurrentUser();
-    const isLiked = post.likes.includes(currentUser?.id);
-    const isRetweeted = post.retweets.includes(currentUser?.id);
     
     return `
         <div class="post" data-post-id="${post.id}">
             <div class="post-header">
                 <div class="avatar-small">${user.avatar || user.username[0].toUpperCase()}</div>
                 <div class="post-info">
-                    <span class="post-username">${user.username}</span>
+                    <span class="post-username">${escapeHtml(user.username)}</span>
                     <span class="post-time">${formatDate(post.timestamp)}</span>
                     <div class="post-content">${escapeHtml(post.content)}</div>
                     ${post.image ? `<img src="${post.image}" class="post-image" alt="Post image">` : ''}
@@ -48,15 +52,11 @@ function renderPost(post) {
     `;
 }
 
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
-
 function loadFeed() {
     const posts = getPosts();
     const feedEl = document.getElementById('feed');
+    
+    if (!feedEl) return;
     
     if (posts.length === 0) {
         feedEl.innerHTML = '<div class="post">Нет постов. Напишите первый!</div>';
@@ -74,6 +74,11 @@ function createPost() {
     
     if (!content.trim() && !imageInput.files[0]) {
         alert('Напишите что-нибудь или добавьте изображение');
+        return;
+    }
+    
+    if (!currentUser) {
+        window.location.href = 'index.html';
         return;
     }
     
@@ -124,6 +129,8 @@ function toggleLike(postId) {
     const posts = getPosts();
     const post = posts.find(p => p.id === postId);
     
+    if (!post) return;
+    
     if (post.likes.includes(currentUser.id)) {
         post.likes = post.likes.filter(id => id !== currentUser.id);
     } else {
@@ -140,6 +147,8 @@ function toggleRetweet(postId) {
     
     const posts = getPosts();
     const post = posts.find(p => p.id === postId);
+    
+    if (!post) return;
     
     if (post.retweets.includes(currentUser.id)) {
         post.retweets = post.retweets.filter(id => id !== currentUser.id);
@@ -171,16 +180,22 @@ function updateUserStats() {
     const posts = getPosts();
     const userPosts = posts.filter(p => p.userId === currentUser.id);
     
-    document.getElementById('posts-count').textContent = userPosts.length;
-    document.getElementById('followers-count').textContent = currentUser.followers?.length || 0;
-    document.getElementById('following-count').textContent = currentUser.following?.length || 0;
-    document.getElementById('current-user').textContent = `@${currentUser.username}`;
-    document.getElementById('profile-name').textContent = currentUser.username;
-    document.getElementById('profile-bio').textContent = currentUser.bio || 'Нет описания';
-    
-    const avatarEl = document.getElementById('profile-avatar');
+    const postsCountEl = document.getElementById('posts-count');
+    const followersCountEl = document.getElementById('followers-count');
+    const followingCountEl = document.getElementById('following-count');
+    const currentUserEl = document.getElementById('current-user');
+    const profileNameEl = document.getElementById('profile-name');
+    const profileBioEl = document.getElementById('profile-bio');
+    const profileAvatarEl = document.getElementById('profile-avatar');
     const postAvatarEl = document.getElementById('post-avatar');
-    if (avatarEl) avatarEl.textContent = currentUser.avatar || currentUser.username[0].toUpperCase();
+    
+    if (postsCountEl) postsCountEl.textContent = userPosts.length;
+    if (followersCountEl) followersCountEl.textContent = currentUser.followers?.length || 0;
+    if (followingCountEl) followingCountEl.textContent = currentUser.following?.length || 0;
+    if (currentUserEl) currentUserEl.textContent = `@${currentUser.username}`;
+    if (profileNameEl) profileNameEl.textContent = currentUser.username;
+    if (profileBioEl) profileBioEl.textContent = currentUser.bio || 'Нет описания';
+    if (profileAvatarEl) profileAvatarEl.textContent = currentUser.avatar || currentUser.username[0].toUpperCase();
     if (postAvatarEl) postAvatarEl.textContent = currentUser.avatar || currentUser.username[0].toUpperCase();
 }
 
@@ -192,11 +207,11 @@ function loadSuggestions() {
     const suggestionsList = document.getElementById('suggestions-list');
     if (suggestionsList) {
         suggestionsList.innerHTML = suggestions.map(user => `
-            <div class="suggestion-item">
+            <div class="suggestion-item" style="display: flex; gap: 12px; padding: 8px 0;">
                 <div class="avatar-small">${user.avatar || user.username[0]}</div>
                 <div>
-                    <div><strong>${user.username}</strong></div>
-                    <div style="font-size: 12px; color: #71767b">@${user.username}</div>
+                    <div><strong>${escapeHtml(user.username)}</strong></div>
+                    <div style="font-size: 12px; color: #71767b">@${escapeHtml(user.username)}</div>
                 </div>
             </div>
         `).join('');
@@ -220,7 +235,7 @@ function loadPreview() {
 
 // Инициализация страницы
 document.addEventListener('DOMContentLoaded', () => {
-    const user = checkAuth();
+    const user = getCurrentUser();
     if (user) {
         loadFeed();
         updateUserStats();
@@ -230,5 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (imageInput) {
             imageInput.addEventListener('change', loadPreview);
         }
+    } else {
+        window.location.href = 'index.html';
     }
 });
