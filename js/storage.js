@@ -134,3 +134,21 @@ function addUser(userData) {
     saveUsers(users);
     return newUser;
 }
+
+// Обновить пользователя
+function updateUser(userId, updates) {
+    const users = getUsers();
+    const index = users.findIndex(u => u.id === userId);
+    if (index !== -1) {
+        users[index] = { ...users[index], ...updates };
+        saveUsers(users);
+        
+        // Если обновляем текущего пользователя, обновляем localStorage
+        const currentUser = getCurrentUser();
+        if (currentUser && currentUser.id === userId) {
+            localStorage.setItem(STORAGE_KEYS.CURRENT_USER, userId);
+        }
+        return users[index];
+    }
+    return null;
+}
