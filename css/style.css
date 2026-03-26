@@ -7,6 +7,7 @@
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     transition: background-color 0.3s, color 0.3s;
+    padding-bottom: 60px;
 }
 
 /* Навигация */
@@ -16,428 +17,377 @@ body {
     width: 100%;
     backdrop-filter: blur(10px);
     border-bottom: 1px solid;
-    padding: 12px 0;
+    padding: 12px 16px;
     z-index: 100;
     transition: background-color 0.3s;
 }
 
 .nav-container {
-    max-width: 1200px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 600px;
     margin: 0 auto;
-    padding: 0 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 20px;
-    flex-wrap: wrap;
 }
 
-.logo {
+.logo-instagram-nav h1 {
     font-size: 24px;
-    font-weight: bold;
-    color: #1d9bf0;
+    font-family: 'Billabong', cursive;
+    background: linear-gradient(45deg, #f09433, #d62976, #962fbf);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
 }
 
-/* Поиск */
-.search-bar {
-    position: relative;
-    flex: 1;
-    max-width: 300px;
-}
-
-.search-bar input {
-    width: 100%;
-    padding: 8px 16px;
-    border-radius: 20px;
-    border: 1px solid;
-    font-size: 14px;
-    outline: none;
-    transition: all 0.3s;
-}
-
-.search-results {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    border-radius: 12px;
-    margin-top: 8px;
-    max-height: 300px;
-    overflow-y: auto;
-    z-index: 1000;
-    display: none;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-.search-results.show {
-    display: block;
-}
-
-.search-result-item {
-    padding: 12px;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.search-result-item:hover {
-    background-color: rgba(29, 155, 240, 0.1);
-}
-
-.nav-links {
+.nav-icons {
     display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.nav-links a {
-    text-decoration: none;
-    padding: 8px 12px;
-    border-radius: 20px;
-    transition: background 0.2s;
-    cursor: pointer;
-}
-
-.theme-switch {
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    padding: 8px;
-    border-radius: 50%;
-    transition: background 0.2s;
-}
-
-.user-info {
-    font-size: 14px;
-}
-
-/* Основной контейнер */
-.main-container {
-    max-width: 1200px;
-    margin: 80px auto 0;
-    padding: 20px;
-    display: grid;
-    grid-template-columns: 300px 1fr 300px;
     gap: 20px;
 }
 
-.sidebar, .sidebar-right {
-    position: sticky;
-    top: 80px;
-    height: fit-content;
-}
-
-/* Карточка профиля */
-.profile-card {
-    border-radius: 16px;
-    padding: 20px;
-    text-align: center;
-    transition: background-color 0.3s;
-}
-
-.avatar-large {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    margin: 0 auto 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 32px;
-    cursor: pointer;
-    background-size: cover;
-    background-position: center;
-    transition: transform 0.2s;
-}
-
-.avatar-large:hover {
-    transform: scale(1.05);
-}
-
-.avatar-small {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    flex-shrink: 0;
-    background-size: cover;
-    background-position: center;
-}
-
-.stats {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 16px;
-    padding-top: 16px;
-    border-top: 1px solid;
-}
-
-.stats div {
-    text-align: center;
-    cursor: pointer;
-}
-
-/* Уведомления */
-.notifications {
-    border-radius: 16px;
-    padding: 16px;
-    margin-top: 20px;
-    transition: background-color 0.3s;
-}
-
-.notifications h3 {
-    margin-bottom: 12px;
-    font-size: 18px;
-}
-
-.notification-item {
-    padding: 10px;
-    border-radius: 12px;
-    margin-bottom: 8px;
-    cursor: pointer;
-    transition: background 0.2s;
-    font-size: 14px;
-}
-
-.notification-item.unread {
-    font-weight: bold;
-}
-
-/* Создание поста */
-.create-post {
-    border-radius: 16px;
-    padding: 16px;
-    margin-bottom: 20px;
-    transition: background-color 0.3s;
-}
-
-.post-input-container {
-    display: flex;
-    gap: 12px;
-}
-
-.post-input-container textarea {
-    flex: 1;
-    border: none;
-    font-size: 16px;
-    font-family: inherit;
-    resize: none;
-    outline: none;
-    background: transparent;
-}
-
-.post-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid;
-}
-
-.btn-image {
+.nav-icon {
     background: none;
     border: none;
-    font-size: 20px;
     cursor: pointer;
-    padding: 8px;
-    border-radius: 50%;
-    transition: background 0.2s;
+    color: inherit;
+    padding: 4px;
 }
 
-.btn-post {
-    border: none;
-    padding: 8px 20px;
-    border-radius: 20px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.2s;
+/* Контейнер историй */
+.stories-container {
+    margin-top: 70px;
+    padding: 12px 16px;
+    border-bottom: 1px solid;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
-/* Вкладки ленты */
-.feed-tabs {
+.stories-scroll {
     display: flex;
-    gap: 10px;
+    gap: 16px;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.stories-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.story-circle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+}
+
+.story-ring {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    padding: 2px;
+    background: linear-gradient(45deg, #f09433, #d62976, #962fbf);
+}
+
+.story-ring-inner {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #262626;
+}
+
+.story-ring-inner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.story-username {
+    font-size: 12px;
+}
+
+/* Лента */
+.feed-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0 0 60px 0;
+}
+
+.post-card {
     margin-bottom: 20px;
     border-bottom: 1px solid;
-}
-
-.feed-tab {
-    background: none;
-    border: none;
-    padding: 12px 20px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: all 0.2s;
-}
-
-.feed-tab.active {
-    border-bottom: 2px solid #1d9bf0;
-    color: #1d9bf0;
-}
-
-/* Пост */
-.post {
-    border-radius: 16px;
-    padding: 16px;
-    margin-bottom: 12px;
-    transition: background 0.2s;
+    padding-bottom: 12px;
 }
 
 .post-header {
     display: flex;
+    align-items: center;
     gap: 12px;
-    margin-bottom: 12px;
+    padding: 12px 16px;
 }
 
-.post-info {
+.post-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+}
+
+.post-user-info {
     flex: 1;
 }
 
 .post-username {
-    font-weight: bold;
-    margin-right: 8px;
+    font-weight: 600;
     cursor: pointer;
 }
 
-.post-time {
-    font-size: 14px;
-}
-
-.post-content {
-    margin-bottom: 12px;
-    line-height: 1.4;
-}
-
-.post-content a {
-    text-decoration: none;
-    color: #1d9bf0;
-}
-
-.post-content a:hover {
-    text-decoration: underline;
+.post-location {
+    font-size: 12px;
+    opacity: 0.6;
 }
 
 .post-image {
-    max-width: 100%;
-    border-radius: 16px;
-    margin: 12px 0;
+    width: 100%;
+    max-height: 600px;
+    object-fit: cover;
     cursor: pointer;
 }
 
-.post-actions-bar {
+.post-actions {
     display: flex;
-    justify-content: space-around;
-    margin-top: 12px;
-    padding-top: 8px;
-    border-top: 1px solid;
+    gap: 16px;
+    padding: 12px 16px;
 }
 
-.action-btn {
+.action-icon {
     background: none;
     border: none;
-    padding: 8px 12px;
-    border-radius: 20px;
+    font-size: 24px;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.2s;
+    transition: transform 0.2s;
 }
 
-.action-btn:hover {
-    background-color: rgba(29, 155, 240, 0.1);
+.action-icon:hover {
+    transform: scale(1.1);
 }
 
-.action-btn.liked {
-    color: #f91880;
+.action-icon.liked {
+    color: #ed4956;
 }
 
-.action-btn.retweeted {
-    color: #00ba7c;
+.post-likes {
+    font-weight: 600;
+    padding: 0 16px 8px;
 }
 
-.replies-count {
-    margin-left: 4px;
+.post-caption {
+    padding: 0 16px 8px;
+}
+
+.post-caption span:first-child {
+    font-weight: 600;
+    margin-right: 8px;
+}
+
+.post-comments {
+    padding: 0 16px 8px;
+    color: #8e8e8e;
+    cursor: pointer;
     font-size: 14px;
 }
 
-/* Тренды */
-.trending {
-    border-radius: 16px;
-    padding: 16px;
-    margin-bottom: 20px;
-    transition: background-color 0.3s;
+.post-time {
+    padding: 0 16px 8px;
+    font-size: 10px;
+    color: #8e8e8e;
 }
 
-.trending h3 {
-    margin-bottom: 12px;
-    font-size: 18px;
+/* Профиль */
+.profile-container {
+    max-width: 600px;
+    margin: 70px auto 0;
+    padding: 20px;
 }
 
-.trending-item {
-    padding: 10px;
-    border-radius: 12px;
-    margin-bottom: 8px;
+.profile-header-instagram {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    padding: 20px 0;
+}
+
+.profile-avatar-large {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
     cursor: pointer;
-    transition: background 0.2s;
 }
 
-.trending-item:hover {
-    background-color: rgba(29, 155, 240, 0.1);
+.avatar-large-inner {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
 }
 
-.trending-tag {
-    font-weight: bold;
-    margin-bottom: 4px;
+.profile-stats-instagram {
+    display: flex;
+    gap: 30px;
+    flex: 1;
+    text-align: center;
 }
 
-.trending-count {
-    font-size: 12px;
+.profile-stats-instagram div {
+    font-size: 14px;
 }
 
-/* Предложения */
-.suggestions {
-    border-radius: 16px;
-    padding: 16px;
-    transition: background-color 0.3s;
-}
-
-.suggestions h3 {
-    margin-bottom: 12px;
+.profile-stats-instagram strong {
+    display: block;
     font-size: 18px;
 }
 
-.suggestion-item {
+.profile-bio {
+    padding: 16px 0;
+}
+
+.edit-profile-btn {
+    margin-top: 12px;
+    padding: 8px 16px;
+    background: none;
+    border: 1px solid;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.profile-tabs-instagram {
+    display: flex;
+    justify-content: space-around;
+    border-top: 1px solid;
+    margin-top: 20px;
+}
+
+.profile-tab {
+    background: none;
+    border: none;
+    padding: 16px;
+    cursor: pointer;
+    opacity: 0.5;
+}
+
+.profile-tab.active {
+    opacity: 1;
+    border-top: 1px solid;
+    margin-top: -1px;
+}
+
+.posts-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 2px;
+}
+
+.grid-post {
+    aspect-ratio: 1;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.grid-post img, .grid-post video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Нижняя навигация */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 12px 20px;
+    border-top: 1px solid;
+    backdrop-filter: blur(10px);
+    z-index: 100;
+}
+
+.bottom-nav-item {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: inherit;
+    padding: 8px;
+}
+
+.bottom-nav-item.active {
+    color: #0095f6;
+}
+
+/* Модальные окна */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    max-width: 500px;
+    width: 90%;
+    border-radius: 12px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    border-bottom: 1px solid;
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Чат */
+.chats-list {
+    margin-top: 70px;
+    padding: 16px;
+}
+
+.chat-item {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 10px;
-    border-radius: 12px;
-    margin-bottom: 8px;
+    padding: 12px;
     cursor: pointer;
+    border-radius: 8px;
     transition: background 0.2s;
 }
 
-.suggestion-item:hover {
-    background-color: rgba(29, 155, 240, 0.1);
+.chat-item:hover {
+    background-color: rgba(0, 149, 246, 0.1);
 }
 
-.follow-btn {
-    margin-left: auto;
-    padding: 4px 12px;
-    border-radius: 20px;
-    border: none;
-    cursor: pointer;
-    font-size: 12px;
-    font-weight: bold;
-    transition: background 0.2s;
-}
-
-/* Форма авторизации */
+/* Авторизация */
 .container {
     display: flex;
     justify-content: center;
@@ -451,34 +401,21 @@ body {
     width: 100%;
     max-width: 400px;
     text-align: center;
-    transition: background-color 0.3s;
 }
 
-.auth-box h1 {
-    margin-bottom: 30px;
-    font-size: 32px;
-}
-
-.theme-toggle {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-}
-
-.theme-btn {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    padding: 10px;
-    border-radius: 50%;
-    transition: background 0.2s;
+.logo-instagram h1 {
+    font-size: 48px;
+    font-family: 'Billabong', cursive;
+    background: linear-gradient(45deg, #f09433, #d62976, #962fbf);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
 }
 
 .auth-tabs {
     display: flex;
     gap: 10px;
-    margin-bottom: 30px;
+    margin: 30px 0;
 }
 
 .tab-btn {
@@ -489,11 +426,10 @@ body {
     font-size: 16px;
     cursor: pointer;
     border-radius: 20px;
-    transition: all 0.2s;
 }
 
 .tab-btn.active {
-    background-color: #1d9bf0;
+    background-color: #0095f6;
     color: white;
 }
 
@@ -512,191 +448,53 @@ body {
     border: 1px solid;
     border-radius: 8px;
     font-size: 16px;
-    transition: background-color 0.3s, color 0.3s;
 }
 
 .auth-form button {
     width: 100%;
     padding: 12px;
-    background-color: #1d9bf0;
+    background-color: #0095f6;
     color: white;
     border: none;
-    border-radius: 20px;
-    font-size: 16px;
+    border-radius: 8px;
     font-weight: bold;
     cursor: pointer;
 }
 
 .error {
-    color: #f91880;
+    color: #ed4956;
     margin-top: 12px;
-    font-size: 14px;
 }
 
-/* Профиль */
-.profile-container {
-    max-width: 800px;
-    margin: 80px auto 0;
-    padding: 20px;
-}
-
-.profile-header {
-    border-radius: 16px;
-    overflow: hidden;
-    margin-bottom: 20px;
-    transition: background-color 0.3s;
-}
-
-.profile-cover {
-    height: 150px;
-    background: linear-gradient(135deg, #1d9bf0, #0a5c8e);
-}
-
-.profile-info {
-    padding: 20px;
-    position: relative;
-}
-
-.avatar-large-profile {
-    width: 120px;
-    height: 120px;
+/* Утилиты */
+.avatar-small {
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    margin-top: -60px;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 48px;
-    border: 4px solid;
-    cursor: pointer;
-    transition: transform 0.2s;
     background-size: cover;
     background-position: center;
 }
 
-.avatar-large-profile:hover {
-    transform: scale(1.05);
-}
-
-.edit-profile-btn {
-    border: none;
-    padding: 8px 20px;
-    border-radius: 20px;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 16px;
-    transition: background 0.2s;
-}
-
-.profile-stats {
-    display: flex;
-    gap: 20px;
-    margin: 16px 0;
-}
-
-.profile-tabs {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-    border-bottom: 1px solid;
-}
-
-.profile-tab {
-    background: none;
-    border: none;
-    padding: 12px 20px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: all 0.2s;
-}
-
-.profile-tab.active {
-    color: #1d9bf0;
-    border-bottom: 2px solid #1d9bf0;
-}
-
-/* Модальное окно */
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
-    z-index: 1000;
-    justify-content: center;
-    align-items: center;
-}
-
-.modal-content {
-    padding: 24px;
-    border-radius: 16px;
-    width: 90%;
-    max-width: 500px;
-    transition: background-color 0.3s;
-}
-
-.modal-content textarea {
-    width: 100%;
-    padding: 12px;
-    margin: 16px 0;
-    border: 1px solid;
-    border-radius: 8px;
-    font-size: 14px;
-    font-family: inherit;
-    resize: vertical;
-}
-
-.modal-buttons {
-    display: flex;
-    gap: 12px;
-}
-
-.modal-buttons button {
-    flex: 1;
-    padding: 10px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background 0.2s;
-}
-
-.modal-buttons button:first-child {
-    background-color: #1d9bf0;
-    color: white;
-    border: none;
+.avatar-medium {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
 }
 
 /* Адаптивность */
-@media (max-width: 1000px) {
-    .main-container {
-        grid-template-columns: 1fr;
+@media (max-width: 600px) {
+    .profile-header-instagram {
+        gap: 20px;
     }
     
-    .sidebar, .sidebar-right {
-        display: none;
+    .profile-stats-instagram {
+        gap: 20px;
     }
     
-    .search-bar {
-        max-width: 200px;
+    .story-ring {
+        width: 60px;
+        height: 60px;
     }
 }
-
-@media (max-width: 768px) {
-    .nav-container {
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    .search-bar {
-        max-width: 100%;
-        width: 100%;
-    }
-    
-    .nav-links {
-        width: 100%;
-        justify-content: center;
-    }
-}
-
