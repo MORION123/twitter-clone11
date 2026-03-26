@@ -1,6 +1,7 @@
-// Логика профиля
+// Логика профиля Instagram
 
 let currentProfileUser = null;
+let currentTab = 'posts';
 
 function loadProfile() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -19,41 +20,44 @@ function loadProfile() {
     }
     
     const isOwnProfile = currentUser?.id === currentProfileUser.id;
-    
-    document.getElementById('profile-fullname').textContent = currentProfileUser.username;
-    document.getElementById('profile-username-display').textContent = `@${currentProfileUser.username}`;
-    document.getElementById('profile-bio-display').textContent = currentProfileUser.bio || 'Нет описания';
-    
-    const avatarLarge = document.getElementById('profile-avatar-large');
-    displayAvatar(avatarLarge, currentProfileUser, 'large');
-    
     const posts = getPosts();
     const userPosts = posts.filter(p => p.userId === currentProfileUser.id);
+    const savedPostsIds = getSavedPosts(currentUser?.id);
+    const savedPosts = posts.filter(p => savedPostsIds.includes(p.id));
     
-    document.getElementById('profile-posts-count').textContent = userPosts.length;
-    document.getElementById('profile-followers-count').textContent = currentProfileUser.followers?.length || 0;
-    document.getElementById('profile-following-count').textContent = currentProfileUser.following?.length || 0;
-    document.getElementById('current-user').textContent = `@${currentUser?.username || ''}`;
+    // Заполняем данные профиля
+    document.getElementById('profile-name').textContent = currentProfileUser.username;
+    document.getElementById('profile-bio-text').textContent = currentProfileUser.bio || 'Нет описания';
+    document.getElementById('posts-count').textContent = userPosts.length;
+    document.getElementById('followers-count').textContent = currentProfileUser.followers?.length || 0;
+    document.getElementById('following-count').textContent = currentProfileUser.following?.length || 0;
+    
+    const avatarElement = document.querySelector('#profile-avatar .avatar-large-inner');
+    if (avatarElement) {
+        if (currentProfileUser.avatarData) {
+            avatarElement.style.backgroundImage = `url('${currentProfileUser.avatarData}')`;
+            avatarElement.textContent = '';
+        } else {
+            avatarElement.style.backgroundImage = '';
+            avatarElement.textContent = currentProfileUser.username[0].toUpperCase();
+        }
+    }
     
     const editBtn = document.getElementById('edit-profile-btn');
     if (editBtn) {
         if (isOwnProfile) {
             editBtn.style.display = 'block';
+            editBtn.textContent = 'Редактировать профиль';
         } else {
-            editBtn.style.display = 'none';
-            
-            // Добавляем кнопку подписки для чужих профилей
+            editBtn.style.display = 'block';
             const isFollowing = currentUser?.following.includes(currentProfileUser.id);
-            const followBtn = document.createElement('button');
-            followBtn.id = 'follow-profile-btn';
-            followBtn.className = 'edit-profile-btn';
-            followBtn.textContent = isFollowing ? 'Отписаться' : 'Подписаться';
-            followBtn.onclick = () => toggleFollowProfile();
-            document.querySelector('.profile-info').appendChild(followBtn);
+            editBtn.textContent = isFollowing ? 'Отписаться' : 'Подписаться';
+            editBtn.onclick = () => toggleFollowProfile();
         }
     }
     
-    showUserPosts();
+    // Показываем посты
+    showUserPosts(userPosts);
 }
 
 function toggleFollowProfile() {
@@ -66,187 +70,168 @@ function toggleFollowProfile() {
     } else {
         currentUser.following.push(currentProfileUser.id);
         currentProfileUser.followers.push(currentUser.id);
-        
-        addNotification(currentProfileUser.id, {
-            type: 'follow',
-            fromUser: currentUser.username,
-            message: `${currentUser.username} подписался на вас`
-        });
     }
     
     updateUser(currentUser.id, { following: currentUser.following });
     updateUser(currentProfileUser.id, { followers: currentProfileUser.followers });
     
-    document.getElementById('profile-followers-count').textContent = currentProfileUser.followers.length;
+    document.getElementById('followers-count').textContent = currentProfileUser.followers.length;
     
-    const followBtn = document.getElementById('follow-profile-btn');
-    if (followBtn) {
-        followBtn.textContent = currentUser.following.includes(currentProfileUser.id) ? 'Отписаться' : 'Подписаться';
+    const editBtn = document.getElementById('edit-profile-btn');
+    if (editBtn) {
+        editBtn.textContent = currentUser.following.includes(currentProfileUser.id) ? 'Отписаться' : 'Подписаться';
     }
     
-    if (typeof loadSuggestions === 'function') loadSuggestions();
     if (typeof loadFeed === 'function') loadFeed();
 }
 
-function showUserPosts() {
-    const posts = getPosts();
-    const userPosts = posts.filter(p => p.userId === currentProfileUser.id);
-    
-    const container = document.getElementById('user-posts');
-    const repliesContainer = document.getElementById('user-replies');
-    
-    container.style.display = 'block';
-    repliesContainer.style.display = 'none';
-    
+function showUserPosts(userPosts) {
+    currentTab = 'posts';
+    const postsGrid = document.getElementById('user-posts-grid');
+    const savedGrid = document.getElementById('saved-posts-grid');
     const tabs = document.querySelectorAll('.profile-tab');
+    
+    postsGrid.style.display = 'grid';
+    savedGrid.style.display = 'none';
     tabs[0].classList.add('active');
     tabs[1].classList.remove('active');
     
     if (userPosts.length === 0) {
-        container.innerHTML = '<div class="post">У пользователя пока нет постов</div>';
+        postsGrid.innerHTML = `
+            <div style="grid-column: 1/-1; text-align: center; padding: 40px;">
+                <p>📸</p>
+                <p><strong>Нет публикаций</strong></p>
+                <p style="font-size: 14px;">Когда вы опубликуете фото, они появятся здесь</p>
+            </div>
+        `;
         return;
     }
     
     userPosts.sort((a, b) => b.timestamp - a.timestamp);
-    container.innerHTML = userPosts.map(post => renderProfilePost(post)).join('');
-}
-
-function showUserReplies() {
-    const posts = getPosts();
-    const allReplies = [];
-    
-    posts.forEach(post => {
-        if (post.replies) {
-            post.replies.forEach(reply => {
-                if (reply.userId === currentProfileUser.id) {
-                    allReplies.push({
-                        ...reply,
-                        originalPostId: post.id,
-                        originalPostContent: post.content,
-                        originalPostUser: findUserById(post.userId)
-                    });
-                }
-            });
-        }
-    });
-    
-    const container = document.getElementById('user-posts');
-    const repliesContainer = document.getElementById('user-replies');
-    
-    container.style.display = 'none';
-    repliesContainer.style.display = 'block';
-    
-    const tabs = document.querySelectorAll('.profile-tab');
-    tabs[0].classList.remove('active');
-    tabs[1].classList.add('active');
-    
-    if (allReplies.length === 0) {
-        repliesContainer.innerHTML = '<div class="post">У пользователя пока нет ответов</div>';
-        return;
-    }
-    
-    allReplies.sort((a, b) => b.timestamp - a.timestamp);
-    repliesContainer.innerHTML = allReplies.map(reply => `
-        <div class="post">
-            <div class="post-header">
-                <div class="avatar-small">${currentProfileUser.avatar || currentProfileUser.username[0].toUpperCase()}</div>
-                <div class="post-info">
-                    <span class="post-username">${escapeHtml(currentProfileUser.username)}</span>
-                    <span class="post-time">${formatDate(reply.timestamp)}</span>
-                    <div class="post-content">${escapeHtml(reply.content)}</div>
-                    <div class="reply-context" style="margin-top: 12px; padding: 12px; background-color: rgba(29, 155, 240, 0.1); border-radius: 12px;">
-                        <div style="font-size: 12px; color: #1d9bf0;">Ответ на пост @${reply.originalPostUser?.username}</div>
-                        <div style="font-size: 14px;">${escapeHtml(reply.originalPostContent?.substring(0, 100))}${reply.originalPostContent?.length > 100 ? '...' : ''}</div>
-                    </div>
-                </div>
-            </div>
+    postsGrid.innerHTML = userPosts.map(post => `
+        <div class="grid-post" onclick="openPostModal('${post.id}')">
+            ${post.image ? `<img src="${post.image}" alt="Post">` : ''}
+            ${post.video ? `<video src="${post.video}" style="width:100%;height:100%;object-fit:cover;"></video>` : ''}
         </div>
     `).join('');
 }
 
-function renderProfilePost(post) {
-    const user = currentProfileUser;
+function showSavedPosts() {
+    currentTab = 'saved';
     const currentUser = getCurrentUser();
-    const isOwnProfile = currentUser?.id === user.id;
+    const posts = getPosts();
+    const savedPostsIds = getSavedPosts(currentUser?.id);
+    const savedPosts = posts.filter(p => savedPostsIds.includes(p.id));
     
-    return `
-        <div class="post" data-post-id="${post.id}">
-            <div class="post-header">
-                <div class="avatar-small" style="background-image: url('${user.avatarData || ''}'); background-size: cover;">${!user.avatarData ? (user.avatar || user.username[0].toUpperCase()) : ''}</div>
-                <div class="post-info">
-                    <span class="post-username">${escapeHtml(user.username)}</span>
-                    <span class="post-time">${formatDate(post.timestamp)}</span>
-                    <div class="post-content">${escapeHtml(post.content)}</div>
-                    ${post.image ? `<img src="${post.image}" class="post-image" onclick="openImage('${post.image}')">` : ''}
-                </div>
+    const postsGrid = document.getElementById('user-posts-grid');
+    const savedGrid = document.getElementById('saved-posts-grid');
+    const tabs = document.querySelectorAll('.profile-tab');
+    
+    postsGrid.style.display = 'none';
+    savedGrid.style.display = 'grid';
+    tabs[0].classList.remove('active');
+    tabs[1].classList.add('active');
+    
+    if (savedPosts.length === 0) {
+        savedGrid.innerHTML = `
+            <div style="grid-column: 1/-1; text-align: center; padding: 40px;">
+                <p>🔖</p>
+                <p><strong>Сохраненные публикации</strong></p>
+                <p style="font-size: 14px;">Добавляйте посты в сохраненное, чтобы увидеть их здесь</p>
             </div>
-            <div class="post-actions-bar">
-                <button class="action-btn ${post.likes.includes(currentUser?.id) ? 'liked' : ''}" onclick="toggleLikeFromProfile('${post.id}')">
-                    ❤️ ${post.likes.length > 0 ? post.likes.length : ''}
-                </button>
-                <button class="action-btn" onclick="openReplyFromProfile('${post.id}')">
-                    💬 ${post.replies?.length > 0 ? post.replies.length : ''}
-                </button>
-                ${isOwnProfile ? `
-                    <button class="action-btn" onclick="deletePostFromProfile('${post.id}')">
-                        🗑️
-                    </button>
-                ` : ''}
+        `;
+        return;
+    }
+    
+    savedPosts.sort((a, b) => b.timestamp - a.timestamp);
+    savedGrid.innerHTML = savedPosts.map(post => `
+        <div class="grid-post" onclick="openPostModal('${post.id}')">
+            ${post.image ? `<img src="${post.image}" alt="Post">` : ''}
+            ${post.video ? `<video src="${post.video}" style="width:100%;height:100%;object-fit:cover;"></video>` : ''}
+        </div>
+    `).join('');
+}
+
+function openPostModal(postId) {
+    const posts = getPosts();
+    const post = posts.find(p => p.id === postId);
+    if (!post) return;
+    
+    const user = findUserById(post.userId);
+    const currentUser = getCurrentUser();
+    const isLiked = post.likes.includes(currentUser?.id);
+    const comments = post.comments || [];
+    
+    const modalHtml = `
+        <div id="post-modal" class="modal" style="display: flex;">
+            <div class="modal-content" style="max-width: 600px; padding: 0;">
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px; border-bottom: 1px solid #efefef;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div class="avatar-small" style="background-image: url('${user?.avatarData || ''}'); background-size: cover;">${!user?.avatarData ? (user?.username[0] || '') : ''}</div>
+                        <strong>${escapeHtml(user?.username)}</strong>
+                    </div>
+                    <button onclick="closePostModal()" style="background: none; border: none; font-size: 24px;">✕</button>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 16px; padding: 16px;">
+                    ${post.image ? `<img src="${post.image}" style="max-width: 100%; border-radius: 8px;">` : ''}
+                    <div>
+                        <div style="display: flex; gap: 16px; margin-bottom: 12px;">
+                            <button class="action-icon ${isLiked ? 'liked' : ''}" onclick="toggleLikeFromModal('${post.id}')">${isLiked ? '❤️' : '🤍'}</button>
+                            <button class="action-icon" onclick="closePostModal(); openCommentsModal('${post.id}')">💬</button>
+                            <button class="action-icon" onclick="sharePost('${post.id}')">📤</button>
+                        </div>
+                        <div><strong>${post.likes.length} отметок "Нравится"</strong></div>
+                        <div style="margin-top: 8px;"><strong>${escapeHtml(user?.username)}</strong> ${escapeHtml(post.content)}</div>
+                        ${comments.length > 0 ? `<div style="margin-top: 12px; color: #8e8e8e;">Посмотреть все комментарии (${comments.length})</div>` : ''}
+                    </div>
+                </div>
             </div>
         </div>
     `;
+    
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
 }
 
-function toggleLikeFromProfile(postId) {
-    const currentUser = getCurrentUser();
-    if (!currentUser) return;
-    
+function closePostModal() {
+    const modal = document.getElementById('post-modal');
+    if (modal) modal.remove();
+}
+
+function toggleLikeFromModal(postId) {
     const posts = getPosts();
     const post = posts.find(p => p.id === postId);
+    const currentUser = getCurrentUser();
     
-    if (!post) return;
-    
-    if (post.likes.includes(currentUser.id)) {
-        post.likes = post.likes.filter(id => id !== currentUser.id);
-    } else {
-        post.likes.push(currentUser.id);
-        if (post.userId !== currentUser.id) {
-            addNotification(post.userId, {
-                type: 'like',
-                fromUser: currentUser.username,
-                postId: postId,
-                message: `${currentUser.username} лайкнул ваш пост`
-            });
+    if (post) {
+        const wasLiked = post.likes.includes(currentUser.id);
+        if (wasLiked) {
+            post.likes = post.likes.filter(id => id !== currentUser.id);
+        } else {
+            post.likes.push(currentUser.id);
         }
+        savePosts(posts);
+        closePostModal();
+        openPostModal(postId);
+        loadProfile();
+        if (typeof loadFeed === 'function') loadFeed();
     }
-    
-    savePosts(posts);
-    showUserPosts();
 }
 
-function deletePostFromProfile(postId) {
-    const currentUser = getCurrentUser();
-    const posts = getPosts();
-    const post = posts.find(p => p.id === postId);
+function uploadAvatar() {
+    const fileInput = document.getElementById('avatar-upload');
+    const file = fileInput.files[0];
     
-    if (post && post.userId === currentUser.id) {
-        if (confirm('Удалить этот пост?')) {
-            const updatedPosts = posts.filter(p => p.id !== postId);
-            savePosts(updatedPosts);
-            showUserPosts();
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const currentUser = getCurrentUser();
+            updateUser(currentUser.id, { avatarData: e.target.result });
+            loadProfile();
             
-            const userPosts = updatedPosts.filter(p => p.userId === currentUser.id);
-            document.getElementById('profile-posts-count').textContent = userPosts.length;
-            
+            if (typeof loadStoriesForFeed === 'function') loadStoriesForFeed();
             if (typeof loadFeed === 'function') loadFeed();
-            if (typeof updateUserStats === 'function') updateUserStats();
-        }
-    }
-}
-
-function openReplyFromProfile(postId) {
-    if (typeof openReplyModal === 'function') {
-        openReplyModal(postId);
+        };
+        reader.readAsDataURL(file);
     }
 }
 
@@ -264,10 +249,6 @@ function saveProfile() {
         updateUser(user.id, { bio: newBio });
         loadProfile();
         closeModal();
-        
-        if (typeof updateUserStats === 'function') {
-            updateUserStats();
-        }
     }
 }
 
@@ -281,7 +262,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loadProfile();
         
         const editBtn = document.getElementById('edit-profile-btn');
-        if (editBtn) {
+        if (editBtn && window.location.search === '') {
             editBtn.onclick = editProfile;
         }
         
