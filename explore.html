@@ -11,6 +11,9 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Instagram Clone">
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
 </head>
 <body>
     <nav class="navbar">
@@ -29,8 +32,6 @@
         <div class="explore-tabs">
             <button class="explore-tab active" onclick="showExploreTab('all')">Все</button>
             <button class="explore-tab" onclick="showExploreTab('recommended')">Рекомендации</button>
-            <button class="explore-tab" onclick="showExploreTab('following')">Подписки</button>
-            <button class="explore-tab" onclick="showExploreTab('followers')">Подписчики</button>
         </div>
         
         <div id="users-list" class="users-list-explore"></div>
@@ -50,6 +51,12 @@
                 <path d="M12 3L21 12"/>
             </svg>
         </button>
+        <button class="bottom-nav-item" onclick="window.location.href='reels.html'">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="2" width="20" height="20" rx="2"/>
+                <path d="M10 8L16 12L10 16V8Z"/>
+            </svg>
+        </button>
         <button class="bottom-nav-item" onclick="window.location.href='messages.html'">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M21 16V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V16"/>
@@ -65,14 +72,105 @@
         </button>
     </div>
     
-    <script src="js/storage.js"></script>
-    <script src="js/app.js"></script>
-    <script src="js/explore.js"></script>
-    <script src="js/theme.js"></script>
     <script>
+        let currentExploreTab = 'all';
+        let allUsers = [];
+        
+        async function loadExplorePage() {
+            const currentUser = window.supabase.getCurrentUser();
+            if (!currentUser) {
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            // Загружаем всех пользователей
+            const result = await window.supabase.searchUsers('');
+            if (result.success) {
+                allUsers = result.users.filter(u => u.id !== currentUser.id);
+                showExploreTab(currentExploreTab);
+            }
+        }
+        
+        function showExploreTab(tab) {
+            currentExploreTab = tab;
+            const tabs = document.querySelectorAll('.explore-tab');
+            tabs.forEach(t => t.classList.remove('active'));
+            if (tab === 'all') tabs[0].classList.add('active');
+            else tabs[1].classList.add('active');
+            
+            let filteredUsers = [];
+            if (tab === 'all') {
+                filteredUsers = allUsers;
+            } else {
+                filteredUsers = allUsers.slice(0, 10);
+            }
+            
+            renderUsersList(filteredUsers);
+        }
+        
+        function renderUsersList(users) {
+            const container = document.getElementById('users-list');
+            const currentUser = window.supabase.getCurrentUser();
+            
+            if (users.length === 0) {
+                container.innerHTML = `<div class="empty-state"><p>👥</p><p><strong>Нет пользователей</strong></p></div>`;
+                return;
+            }
+            
+            container.innerHTML = users.map(user => `
+                <div class="user-card" onclick="goToUserProfile('${user.username}')">
+                    <div class="user-avatar" style="background-image: url('${user.avatar || ''}'); background-size: cover;">${!user.avatar ? (user.username[0]?.toUpperCase() || '👤') : ''}</div>
+                    <div class="user-info">
+                        <div class="user-name">${escapeHtml(user.username)}</div>
+                        <div class="user-bio">${user.bio || 'Нет описания'}</div>
+                    </div>
+                    <button class="follow-btn" onclick="event.stopPropagation(); followFromExplore('${user.id}')">Подписаться</button>
+                </div>
+            `).join('');
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        async function searchUsers() {
+            const query = document.getElementById('search-users').value;
+            if (!query.trim()) {
+                showExploreTab(currentExploreTab);
+                return;
+            }
+            
+            const result = await window.supabase.searchUsers(query);
+            if (result.success) {
+                const currentUser = window.supabase.getCurrentUser();
+                const filtered = result.users.filter(u => u.id !== currentUser.id);
+                renderUsersList(filtered);
+            }
+        }
+        
+        async function followFromExplore(userId) {
+            const result = await window.supabase.followUser(userId);
+            if (result.success) {
+                alert('Подписка оформлена!');
+                loadExplorePage();
+            }
+        }
+        
+        function goToUserProfile(username) {
+            window.location.href = `profile.html?user=${username}`;
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            loadExplorePage();
+        });
+        
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/sw.js').catch(console.log);
         }
     </script>
+    <script src="js/theme.js"></script>
 </body>
 </html>
