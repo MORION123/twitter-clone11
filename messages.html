@@ -2,10 +2,14 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
     <title>Instagram Clone - Сообщения</title>
     <link rel="stylesheet" href="css/style.css">
     <link id="theme-style" rel="stylesheet" href="css/light-theme.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Instagram Clone">
 </head>
 <body>
     <nav class="navbar">
@@ -17,39 +21,38 @@
     </nav>
     
     <div class="messages-container">
-        <div id="chats-list" class="chats-list">
-            <!-- Список чатов -->
-        </div>
+        <div id="chats-list" class="chats-list"></div>
     </div>
     
     <div class="bottom-nav">
         <button class="bottom-nav-item" onclick="window.location.href='feed.html'">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path d="M3 9L12 3L21 9L12 15L3 9Z" stroke="currentColor" stroke-width="2" fill="none"/>
-                <path d="M3 15L12 21L21 15" stroke="currentColor" stroke-width="2" fill="none"/>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9L12 3L21 9L12 15L3 9Z"/>
+                <path d="M3 15L12 21L21 15"/>
+            </svg>
+        </button>
+        <button class="bottom-nav-item" onclick="window.location.href='explore.html'">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M21 12C21 16.97 16.97 21 12 21C7.03 21 3 16.97 3 12C3 7.03 7.03 3 12 3"/>
+                <path d="M12 3L21 12"/>
             </svg>
         </button>
         <button class="bottom-nav-item active" onclick="window.location.href='messages.html'">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path d="M21 16V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V16" stroke="currentColor" stroke-width="2" fill="none"/>
-                <path d="M17 8L12 13L7 8" stroke="currentColor" stroke-width="2" fill="none"/>
-                <path d="M12 3V13" stroke="currentColor" stroke-width="2"/>
-            </svg>
-        </button>
-        <button class="bottom-nav-item" onclick="openCreatePostModal()">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path d="M12 4V20M4 12H20" stroke="currentColor" stroke-width="2"/>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 16V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V16"/>
+                <path d="M17 8L12 13L7 8"/>
+                <path d="M12 3V13"/>
             </svg>
         </button>
         <button class="bottom-nav-item" onclick="window.location.href='profile.html'">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path d="M20 21V19C20 16.8 18.2 15 16 15H8C5.8 15 4 16.8 4 19V21" stroke="currentColor" stroke-width="2" fill="none"/>
-                <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" fill="none"/>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21V19C20 16.8 18.2 15 16 15H8C5.8 15 4 16.8 4 19V21"/>
+                <circle cx="12" cy="7" r="4"/>
             </svg>
         </button>
     </div>
     
-    <!-- Модальное окно нового чата -->
     <div id="new-chat-modal" class="modal">
         <div class="modal-content">
             <h3>Новое сообщение</h3>
@@ -59,6 +62,13 @@
     </div>
     
     <script src="js/storage.js"></script>
+    <script src="js/app.js"></script>
     <script src="js/messages.js"></script>
+    <script src="js/theme.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').catch(console.log);
+        }
+    </script>
 </body>
 </html>
