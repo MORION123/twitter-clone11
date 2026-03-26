@@ -1,4 +1,3 @@
-/* Светлая тема */
 body.light-theme {
     background-color: #ffffff;
     color: #0f1419;
@@ -6,137 +5,69 @@ body.light-theme {
 
 .light-theme .navbar {
     background-color: rgba(255, 255, 255, 0.95);
-    border-bottom-color: #eff3f4;
+    border-bottom-color: #efefef;
 }
 
-.light-theme .search-bar input {
-    background-color: #eff3f4;
-    border-color: #eff3f4;
+.light-theme .search-bar-explore input,
+.light-theme .post-input-area textarea,
+.light-theme .add-comment textarea,
+.light-theme .chat-input input {
+    background-color: #efefef;
+    border-color: #efefef;
     color: #0f1419;
 }
 
-.light-theme .search-bar input:focus {
-    border-color: #1d9bf0;
-    background-color: #ffffff;
-}
-
-.light-theme .search-results {
-    background-color: #ffffff;
-    border: 1px solid #eff3f4;
-}
-
-.light-theme .search-result-item {
-    border-bottom: 1px solid #eff3f4;
-}
-
-.light-theme .search-result-item:hover {
-    background-color: #f7f9f9;
-}
-
-.light-theme .nav-links a {
-    color: #0f1419;
-}
-
-.light-theme .nav-links a:hover,
-.light-theme .nav-links a.active {
-    background-color: #e7e9ea;
-}
-
-.light-theme .theme-switch,
-.light-theme .theme-btn {
-    background-color: #e7e9ea;
-    color: #0f1419;
-}
-
-.light-theme .user-info {
-    color: #536471;
-}
-
+.light-theme .post-card,
 .light-theme .profile-card,
-.light-theme .create-post,
-.light-theme .post,
-.light-theme .notifications,
-.light-theme .trending,
-.light-theme .suggestions,
-.light-theme .profile-header,
-.light-theme .auth-box,
-.light-theme .modal-content {
+.light-theme .user-card,
+.light-theme .chat-item,
+.light-theme .modal-content,
+.light-theme .auth-box {
     background-color: #ffffff;
-    border: 1px solid #eff3f4;
 }
 
-.light-theme .post-input-container textarea {
-    color: #0f1419;
+.light-theme .post {
+    border-bottom-color: #efefef;
 }
 
-.light-theme .post-input-container textarea::placeholder {
-    color: #536471;
+.light-theme .action-icon {
+    color: #262626;
 }
 
-.light-theme .post-actions {
-    border-top-color: #eff3f4;
-}
-
-.light-theme .btn-image {
-    color: #536471;
-}
-
-.light-theme .btn-image:hover {
-    background-color: #e7e9ea;
-}
-
-.light-theme .btn-post {
-    background-color: #1d9bf0;
+.light-theme .follow-btn {
+    background-color: #0095f6;
     color: white;
 }
 
-.light-theme .stats,
-.light-theme .post-actions-bar {
-    border-top-color: #eff3f4;
+.light-theme .follow-btn.following {
+    background-color: transparent;
+    border-color: #dbdbdb;
+    color: #262626;
 }
 
-.light-theme .action-btn {
-    color: #536471;
+.light-theme .explore-tab {
+    border-color: #dbdbdb;
+    color: #262626;
 }
 
-.light-theme .action-btn:hover {
-    background-color: #e7e9ea;
-}
-
-.light-theme .feed-tabs {
-    border-bottom-color: #eff3f4;
-}
-
-.light-theme .feed-tab {
-    color: #536471;
-}
-
-.light-theme .feed-tab.active {
-    color: #1d9bf0;
-}
-
-.light-theme .trending-item:hover,
-.light-theme .suggestion-item:hover {
-    background-color: #f7f9f9;
-}
-
-.light-theme .auth-form input {
-    background-color: #ffffff;
-    border-color: #eff3f4;
-    color: #0f1419;
-}
-
-.light-theme .tab-btn {
-    color: #536471;
-}
-
-.light-theme .tab-btn.active {
-    background-color: #1d9bf0;
+.light-theme .explore-tab.active {
+    background-color: #0095f6;
+    border-color: #0095f6;
     color: white;
 }
 
-.light-theme .modal-content textarea {
-    background-color: #ffffff;
-    border-color: #eff3f4;
-    color: #0f1419;
+.light-theme .user-stats,
+.light-theme .post-time,
+.light-theme .post-comments {
+    color: #8e8e8e;
+}
+
+.light-theme .message.received {
+    background-color: #efefef;
+    color: #262626;
+}
+
+.light-theme .message.sent {
+    background-color: #0095f6;
+    color: white;
 }
