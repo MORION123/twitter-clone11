@@ -1,1 +1,102 @@
-
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Instagram Clone - Чат</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link id="theme-style" rel="stylesheet" href="css/light-theme.css">
+    <style>
+        .chat-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: inherit;
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .message {
+            max-width: 70%;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        .message.sent {
+            align-self: flex-end;
+            background-color: #0095f6;
+            color: white;
+        }
+        .message.received {
+            align-self: flex-start;
+            background-color: #efefef;
+            color: black;
+        }
+        .message-time {
+            font-size: 10px;
+            margin-top: 4px;
+            opacity: 0.7;
+        }
+        .chat-input {
+            padding: 12px;
+            border-top: 1px solid;
+            display: flex;
+            gap: 8px;
+        }
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid;
+            border-radius: 24px;
+            outline: none;
+        }
+        .chat-input button {
+            padding: 8px 16px;
+            background-color: #0095f6;
+            color: white;
+            border: none;
+            border-radius: 24px;
+            cursor: pointer;
+        }
+        .chat-header {
+            padding: 12px;
+            border-bottom: 1px solid;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .back-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <button class="back-btn" onclick="window.location.href='messages.html'">←</button>
+            <div class="avatar-small" id="chat-avatar"></div>
+            <div>
+                <strong id="chat-username"></strong>
+            </div>
+        </div>
+        
+        <div class="chat-messages" id="chat-messages"></div>
+        
+        <div class="chat-input">
+            <input type="text" id="message-input" placeholder="Напишите сообщение..." onkeypress="if(event.key==='Enter') sendMessage()">
+            <button onclick="sendMessage()">Отправить</button>
+        </div>
+    </div>
+    
+    <script src="js/storage.js"></script>
+    <script src="js/messages.js"></script>
+</body>
+</html>
