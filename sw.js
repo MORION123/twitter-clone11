@@ -1,4 +1,3 @@
-// Service Worker для PWA
 const CACHE_NAME = 'instagram-clone-v1';
 const urlsToCache = [
   '/',
@@ -8,6 +7,7 @@ const urlsToCache = [
   '/messages.html',
   '/stories.html',
   '/chat.html',
+  '/explore.html',
   '/css/style.css',
   '/css/light-theme.css',
   '/css/dark-theme.css',
@@ -17,6 +17,7 @@ const urlsToCache = [
   '/js/profile.js',
   '/js/messages.js',
   '/js/stories.js',
+  '/js/explore.js',
   '/js/theme.js'
 ];
 
