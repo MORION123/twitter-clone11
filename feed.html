@@ -57,9 +57,10 @@
                 <path d="M12 3L21 12"/>
             </svg>
         </button>
-        <button class="bottom-nav-item" onclick="openCreatePostModal()">
+        <button class="bottom-nav-item" onclick="window.location.href='reels.html'">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 4V20M4 12H20" stroke="currentColor" stroke-width="2"/>
+                <rect x="2" y="2" width="20" height="20" rx="2"/>
+                <path d="M10 8L16 12L10 16V8Z"/>
             </svg>
         </button>
         <button class="bottom-nav-item" onclick="window.location.href='messages.html'">
@@ -87,7 +88,13 @@
                 <textarea id="new-post-content" placeholder="Напишите подпись..." rows="3"></textarea>
                 <div class="media-upload">
                     <button class="btn-image" onclick="document.getElementById('new-post-image').click()">📷 Добавить фото</button>
+                    <button class="btn-image" onclick="document.getElementById('new-post-video').click()">🎥 Добавить видео</button>
                     <input type="file" id="new-post-image" accept="image/*" style="display: none">
+                    <input type="file" id="new-post-video" accept="video/*" style="display: none">
+                </div>
+                <div class="location-input" style="margin: 12px 0;">
+                    <button class="btn-location" onclick="getCurrentLocation()">📍 Добавить место</button>
+                    <input type="text" id="post-location" placeholder="Или введите название места" style="width: 100%; margin-top: 8px; padding: 8px; border-radius: 8px;">
                 </div>
                 <div id="new-post-preview"></div>
                 <button class="btn-post" onclick="createPostFromModal()">Опубликовать</button>
@@ -109,6 +116,12 @@
         </div>
     </div>
     
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-messaging.js"></script>
+    <script src="firebase-config.js"></script>
     <script src="js/storage.js"></script>
     <script src="js/app.js"></script>
     <script src="js/feed.js"></script>
