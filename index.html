@@ -2,18 +2,25 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitter Clone - Вход</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Instagram Clone - Вход</title>
     <link rel="stylesheet" href="css/style.css">
     <link id="theme-style" rel="stylesheet" href="css/light-theme.css">
+    
+    <!-- PWA настройки -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📸%3C/text%3E%3C/svg%3E">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Instagram Clone">
+    <meta name="theme-color" content="#ffffff">
 </head>
 <body>
     <div class="container">
-        <div class="theme-toggle">
-            <button onclick="toggleTheme()" class="theme-btn">🌙</button>
-        </div>
         <div class="auth-box">
-            <h1>🐦 Twitter Clone</h1>
+            <div class="logo-instagram">
+                <h1>📸 Instagram</h1>
+                <p>Clone</p>
+            </div>
             
             <div class="auth-tabs">
                 <button class="tab-btn active" onclick="showTab('login')">Вход</button>
