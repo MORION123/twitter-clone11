@@ -90,28 +90,91 @@ function loadFeed() {
     const posts = getPosts();
     const currentUser = getCurrentUser();
     
+    if (!currentUser) return;
+    
     // Посты от подписок + свои
-    let filteredPosts = posts.filter(post => 
+    let followingPosts = posts.filter(post => 
         currentUser.following.includes(post.userId) || post.userId === currentUser.id
     );
     
     const feedEl = document.getElementById('feed');
     if (!feedEl) return;
     
-    if (filteredPosts.length === 0) {
-        feedEl.innerHTML = `
-            <div class="post-card" style="text-align: center; padding: 40px;">
-                <p>📸</p>
-                <p><strong>Подпишитесь на друзей</strong></p>
-                <p style="font-size: 14px;">Чтобы видеть публикации, подпишитесь на других пользователей</p>
-                <button onclick="window.location.href='profile.html'" style="margin-top: 16px; padding: 8px 16px; background: #0095f6; color: white; border: none; border-radius: 8px;">Найти друзей</button>
-            </div>
-        `;
+    // Если нет подписок и нет своих постов, показываем рекомендованные
+    if (followingPosts.length === 0) {
+        // Показываем последние 10 постов от всех пользователей (кроме себя)
+        const recommendedPosts = [...posts]
+            .filter(post => post.userId !== currentUser.id)
+            .sort((a, b) => b.timestamp - a.timestamp)
+            .slice(0, 10);
+        
+        if (recommendedPosts.length === 0) {
+            feedEl.innerHTML = `
+                <div class="empty-feed">
+                    <p>📸</p>
+                    <p><strong>Добро пожаловать в Instagram Clone!</strong></p>
+                    <p style="font-size: 14px;">Здесь будут публикации людей, на которых вы подписаны</p>
+                    <button onclick="window.location.href='profile.html'" style="margin-top: 16px; padding: 10px 20px; background: #0095f6; color: white; border: none; border-radius: 8px;">Найти друзей</button>
+                </div>
+            `;
+        } else {
+            // Показываем рекомендации и популярные посты
+            const users = getUsers();
+            const suggestedUsers = users.filter(u => 
+                u.id !== currentUser.id && !currentUser.following.includes(u.id)
+            ).slice(0, 5);
+            
+            let suggestionsHtml = '';
+            if (suggestedUsers.length > 0) {
+                suggestionsHtml = `
+                    <div class="empty-feed">
+                        <p><strong>✨ Рекомендации для вас</strong></p>
+                        <p style="font-size: 14px; margin-bottom: 16px;">Подпишитесь, чтобы видеть больше интересных постов</p>
+                        <div class="suggestions-list" id="feed-suggestions"></div>
+                    </div>
+                `;
+            }
+            
+            feedEl.innerHTML = suggestionsHtml + recommendedPosts.map(post => renderPost(post)).join('');
+            
+            // Добавляем кнопки подписки в рекомендации
+            const suggestionsContainer = document.getElementById('feed-suggestions');
+            if (suggestionsContainer && suggestedUsers.length > 0) {
+                suggestionsContainer.innerHTML = suggestedUsers.map(user => `
+                    <div class="suggestion-item">
+                        <div class="avatar-small" style="background-image: url('${user.avatarData || ''}'); background-size: cover;">${!user.avatarData ? (user.username[0] || '') : ''}</div>
+                        <div style="flex: 1;">
+                            <div><strong>${escapeHtml(user.username)}</strong></div>
+                            <div style="font-size: 12px; color: #8e8e8e;">${user.bio || ''}</div>
+                        </div>
+                        <button class="follow-btn" onclick="followUserFromFeed('${user.username}')">Подписаться</button>
+                    </div>
+                `).join('');
+            }
+        }
         return;
     }
     
-    filteredPosts.sort((a, b) => b.timestamp - a.timestamp);
-    feedEl.innerHTML = filteredPosts.map(post => renderPost(post)).join('');
+    followingPosts.sort((a, b) => b.timestamp - a.timestamp);
+    feedEl.innerHTML = followingPosts.map(post => renderPost(post)).join('');
+}
+
+function followUserFromFeed(username) {
+    const currentUser = getCurrentUser();
+    const userToFollow = findUserByUsername(username);
+    
+    if (!userToFollow) return;
+    
+    if (!currentUser.following.includes(userToFollow.id)) {
+        currentUser.following.push(userToFollow.id);
+        userToFollow.followers.push(currentUser.id);
+        
+        updateUser(currentUser.id, { following: currentUser.following });
+        updateUser(userToFollow.id, { followers: userToFollow.followers });
+    }
+    
+    loadFeed(); // Обновляем ленту
+    if (typeof loadSuggestions === 'function') loadSuggestions();
 }
 
 function createPost(content, imageData, videoData = null) {
@@ -161,7 +224,7 @@ function toggleSave(postId) {
     if (!currentUser) return;
     
     const saved = toggleSavePost(currentUser.id, postId);
-    loadFeed(); // Обновляем иконку
+    loadFeed();
 }
 
 function openCommentsModal(postId) {
@@ -178,7 +241,7 @@ function openCommentsModal(postId) {
         commentsList.innerHTML = post.comments.map(comment => {
             const user = findUserById(comment.userId);
             return `
-                <div class="comment-item" style="display: flex; gap: 12px; padding: 12px; border-bottom: 1px solid #efefef;">
+                <div class="comment-item">
                     <div class="avatar-small" style="background-image: url('${user?.avatarData || ''}'); background-size: cover;">${!user?.avatarData ? (user?.username[0] || '') : ''}</div>
                     <div style="flex: 1;">
                         <strong>${escapeHtml(user?.username)}</strong>
@@ -284,17 +347,22 @@ function showPostOptions(postId) {
 
 // Загрузка превью изображения
 document.addEventListener('DOMContentLoaded', () => {
-    const imageInput = document.getElementById('new-post-image');
-    if (imageInput) {
-        imageInput.addEventListener('change', function() {
-            const preview = document.getElementById('new-post-preview');
-            if (this.files && this.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    preview.innerHTML = `<img src="${e.target.result}" style="max-width: 100%; border-radius: 8px; margin-top: 12px;">`;
-                };
-                reader.readAsDataURL(this.files[0]);
-            }
-        });
+    const user = getCurrentUser();
+    if (user && window.location.pathname.includes('feed.html')) {
+        loadFeed();
+        
+        const imageInput = document.getElementById('new-post-image');
+        if (imageInput) {
+            imageInput.addEventListener('change', function() {
+                const preview = document.getElementById('new-post-preview');
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        preview.innerHTML = `<img src="${e.target.result}" style="max-width: 100%; border-radius: 8px; margin-top: 12px;">`;
+                    };
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+        }
     }
 });
