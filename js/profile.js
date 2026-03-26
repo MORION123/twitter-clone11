@@ -1,35 +1,96 @@
 // Логика профиля
 
+let currentProfileUser = null;
+
 function loadProfile() {
-    const user = getCurrentUser();
-    if (!user) {
-        window.location.href = 'index.html';
+    const urlParams = new URLSearchParams(window.location.search);
+    const username = urlParams.get('user');
+    const currentUser = getCurrentUser();
+    
+    if (username) {
+        currentProfileUser = findUserByUsername(username);
+    } else {
+        currentProfileUser = currentUser;
+    }
+    
+    if (!currentProfileUser) {
+        window.location.href = 'feed.html';
         return;
     }
     
-    // Заполняем информацию профиля
-    document.getElementById('profile-fullname').textContent = user.username;
-    document.getElementById('profile-username-display').textContent = `@${user.username}`;
-    document.getElementById('profile-bio-display').textContent = user.bio || 'Нет описания';
-    document.getElementById('profile-avatar-large').textContent = user.avatar || user.username[0].toUpperCase();
+    const isOwnProfile = currentUser?.id === currentProfileUser.id;
+    
+    document.getElementById('profile-fullname').textContent = currentProfileUser.username;
+    document.getElementById('profile-username-display').textContent = `@${currentProfileUser.username}`;
+    document.getElementById('profile-bio-display').textContent = currentProfileUser.bio || 'Нет описания';
+    
+    const avatarLarge = document.getElementById('profile-avatar-large');
+    displayAvatar(avatarLarge, currentProfileUser, 'large');
     
     const posts = getPosts();
-    const userPosts = posts.filter(p => p.userId === user.id);
+    const userPosts = posts.filter(p => p.userId === currentProfileUser.id);
     
     document.getElementById('profile-posts-count').textContent = userPosts.length;
-    document.getElementById('profile-followers-count').textContent = user.followers?.length || 0;
-    document.getElementById('profile-following-count').textContent = user.following?.length || 0;
+    document.getElementById('profile-followers-count').textContent = currentProfileUser.followers?.length || 0;
+    document.getElementById('profile-following-count').textContent = currentProfileUser.following?.length || 0;
+    document.getElementById('current-user').textContent = `@${currentUser?.username || ''}`;
     
-    document.getElementById('current-user').textContent = `@${user.username}`;
+    const editBtn = document.getElementById('edit-profile-btn');
+    if (editBtn) {
+        if (isOwnProfile) {
+            editBtn.style.display = 'block';
+        } else {
+            editBtn.style.display = 'none';
+            
+            // Добавляем кнопку подписки для чужих профилей
+            const isFollowing = currentUser?.following.includes(currentProfileUser.id);
+            const followBtn = document.createElement('button');
+            followBtn.id = 'follow-profile-btn';
+            followBtn.className = 'edit-profile-btn';
+            followBtn.textContent = isFollowing ? 'Отписаться' : 'Подписаться';
+            followBtn.onclick = () => toggleFollowProfile();
+            document.querySelector('.profile-info').appendChild(followBtn);
+        }
+    }
     
-    // Загружаем посты пользователя
     showUserPosts();
 }
 
+function toggleFollowProfile() {
+    const currentUser = getCurrentUser();
+    const isFollowing = currentUser.following.includes(currentProfileUser.id);
+    
+    if (isFollowing) {
+        currentUser.following = currentUser.following.filter(id => id !== currentProfileUser.id);
+        currentProfileUser.followers = currentProfileUser.followers.filter(id => id !== currentUser.id);
+    } else {
+        currentUser.following.push(currentProfileUser.id);
+        currentProfileUser.followers.push(currentUser.id);
+        
+        addNotification(currentProfileUser.id, {
+            type: 'follow',
+            fromUser: currentUser.username,
+            message: `${currentUser.username} подписался на вас`
+        });
+    }
+    
+    updateUser(currentUser.id, { following: currentUser.following });
+    updateUser(currentProfileUser.id, { followers: currentProfileUser.followers });
+    
+    document.getElementById('profile-followers-count').textContent = currentProfileUser.followers.length;
+    
+    const followBtn = document.getElementById('follow-profile-btn');
+    if (followBtn) {
+        followBtn.textContent = currentUser.following.includes(currentProfileUser.id) ? 'Отписаться' : 'Подписаться';
+    }
+    
+    if (typeof loadSuggestions === 'function') loadSuggestions();
+    if (typeof loadFeed === 'function') loadFeed();
+}
+
 function showUserPosts() {
-    const user = getCurrentUser();
     const posts = getPosts();
-    const userPosts = posts.filter(p => p.userId === user.id);
+    const userPosts = posts.filter(p => p.userId === currentProfileUser.id);
     
     const container = document.getElementById('user-posts');
     const repliesContainer = document.getElementById('user-replies');
@@ -37,60 +98,100 @@ function showUserPosts() {
     container.style.display = 'block';
     repliesContainer.style.display = 'none';
     
-    // Активируем вкладку
     const tabs = document.querySelectorAll('.profile-tab');
     tabs[0].classList.add('active');
     tabs[1].classList.remove('active');
     
     if (userPosts.length === 0) {
-        container.innerHTML = '<div class="post">У вас пока нет постов</div>';
+        container.innerHTML = '<div class="post">У пользователя пока нет постов</div>';
         return;
     }
     
     userPosts.sort((a, b) => b.timestamp - a.timestamp);
-    container.innerHTML = userPosts.map(renderProfilePost).join('');
+    container.innerHTML = userPosts.map(post => renderProfilePost(post)).join('');
 }
 
 function showUserReplies() {
-    const user = getCurrentUser();
     const posts = getPosts();
-    // Для ответов нужна отдельная логика, пока показываем просто сообщение
+    const allReplies = [];
+    
+    posts.forEach(post => {
+        if (post.replies) {
+            post.replies.forEach(reply => {
+                if (reply.userId === currentProfileUser.id) {
+                    allReplies.push({
+                        ...reply,
+                        originalPostId: post.id,
+                        originalPostContent: post.content,
+                        originalPostUser: findUserById(post.userId)
+                    });
+                }
+            });
+        }
+    });
+    
     const container = document.getElementById('user-posts');
     const repliesContainer = document.getElementById('user-replies');
     
     container.style.display = 'none';
     repliesContainer.style.display = 'block';
     
-    // Активируем вкладку
     const tabs = document.querySelectorAll('.profile-tab');
     tabs[0].classList.remove('active');
     tabs[1].classList.add('active');
     
-    repliesContainer.innerHTML = '<div class="post">Функция ответов будет добавлена позже</div>';
+    if (allReplies.length === 0) {
+        repliesContainer.innerHTML = '<div class="post">У пользователя пока нет ответов</div>';
+        return;
+    }
+    
+    allReplies.sort((a, b) => b.timestamp - a.timestamp);
+    repliesContainer.innerHTML = allReplies.map(reply => `
+        <div class="post">
+            <div class="post-header">
+                <div class="avatar-small">${currentProfileUser.avatar || currentProfileUser.username[0].toUpperCase()}</div>
+                <div class="post-info">
+                    <span class="post-username">${escapeHtml(currentProfileUser.username)}</span>
+                    <span class="post-time">${formatDate(reply.timestamp)}</span>
+                    <div class="post-content">${escapeHtml(reply.content)}</div>
+                    <div class="reply-context" style="margin-top: 12px; padding: 12px; background-color: rgba(29, 155, 240, 0.1); border-radius: 12px;">
+                        <div style="font-size: 12px; color: #1d9bf0;">Ответ на пост @${reply.originalPostUser?.username}</div>
+                        <div style="font-size: 14px;">${escapeHtml(reply.originalPostContent?.substring(0, 100))}${reply.originalPostContent?.length > 100 ? '...' : ''}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `).join('');
 }
 
 function renderProfilePost(post) {
-    const user = findUserById(post.userId);
-    if (!user) return '';
+    const user = currentProfileUser;
+    const currentUser = getCurrentUser();
+    const isOwnProfile = currentUser?.id === user.id;
     
     return `
         <div class="post" data-post-id="${post.id}">
             <div class="post-header">
-                <div class="avatar-small">${user.avatar || user.username[0].toUpperCase()}</div>
+                <div class="avatar-small" style="background-image: url('${user.avatarData || ''}'); background-size: cover;">${!user.avatarData ? (user.avatar || user.username[0].toUpperCase()) : ''}</div>
                 <div class="post-info">
                     <span class="post-username">${escapeHtml(user.username)}</span>
                     <span class="post-time">${formatDate(post.timestamp)}</span>
                     <div class="post-content">${escapeHtml(post.content)}</div>
-                    ${post.image ? `<img src="${post.image}" class="post-image" alt="Post image">` : ''}
+                    ${post.image ? `<img src="${post.image}" class="post-image" onclick="openImage('${post.image}')">` : ''}
                 </div>
             </div>
             <div class="post-actions-bar">
-                <button class="action-btn" onclick="toggleLikeFromProfile('${post.id}')">
+                <button class="action-btn ${post.likes.includes(currentUser?.id) ? 'liked' : ''}" onclick="toggleLikeFromProfile('${post.id}')">
                     ❤️ ${post.likes.length > 0 ? post.likes.length : ''}
                 </button>
-                <button class="action-btn" onclick="deletePostFromProfile('${post.id}')">
-                    🗑️ Удалить
+                <button class="action-btn" onclick="openReplyFromProfile('${post.id}')">
+                    💬 ${post.replies?.length > 0 ? post.replies.length : ''}
                 </button>
+                ${isOwnProfile ? `
+                    <button class="action-btn" onclick="deletePostFromProfile('${post.id}')">
+                        🗑️
+                    </button>
+                ` : ''}
             </div>
         </div>
     `;
@@ -109,6 +210,14 @@ function toggleLikeFromProfile(postId) {
         post.likes = post.likes.filter(id => id !== currentUser.id);
     } else {
         post.likes.push(currentUser.id);
+        if (post.userId !== currentUser.id) {
+            addNotification(post.userId, {
+                type: 'like',
+                fromUser: currentUser.username,
+                postId: postId,
+                message: `${currentUser.username} лайкнул ваш пост`
+            });
+        }
     }
     
     savePosts(posts);
@@ -121,14 +230,23 @@ function deletePostFromProfile(postId) {
     const post = posts.find(p => p.id === postId);
     
     if (post && post.userId === currentUser.id) {
-        const updatedPosts = posts.filter(p => p.id !== postId);
-        savePosts(updatedPosts);
-        showUserPosts();
-        
-        // Обновляем счетчик постов
-        const user = getCurrentUser();
-        const userPosts = updatedPosts.filter(p => p.userId === user.id);
-        document.getElementById('profile-posts-count').textContent = userPosts.length;
+        if (confirm('Удалить этот пост?')) {
+            const updatedPosts = posts.filter(p => p.id !== postId);
+            savePosts(updatedPosts);
+            showUserPosts();
+            
+            const userPosts = updatedPosts.filter(p => p.userId === currentUser.id);
+            document.getElementById('profile-posts-count').textContent = userPosts.length;
+            
+            if (typeof loadFeed === 'function') loadFeed();
+            if (typeof updateUserStats === 'function') updateUserStats();
+        }
+    }
+}
+
+function openReplyFromProfile(postId) {
+    if (typeof openReplyModal === 'function') {
+        openReplyModal(postId);
     }
 }
 
@@ -147,7 +265,6 @@ function saveProfile() {
         loadProfile();
         closeModal();
         
-        // Обновляем sidebar если на странице ленты
         if (typeof updateUserStats === 'function') {
             updateUserStats();
         }
@@ -158,47 +275,23 @@ function closeModal() {
     document.getElementById('edit-modal').style.display = 'none';
 }
 
-// Добавляем formatDate если не определена
-if (typeof formatDate === 'undefined') {
-    window.formatDate = function(timestamp) {
-        const date = new Date(timestamp);
-        const now = new Date();
-        const diff = now - date;
-        const minutes = Math.floor(diff / 60000);
-        const hours = Math.floor(minutes / 60);
-        const days = Math.floor(hours / 24);
-        
-        if (minutes < 1) return 'только что';
-        if (minutes < 60) return `${minutes} мин`;
-        if (hours < 24) return `${hours} ч`;
-        return `${days} дн`;
-    };
-}
-
-// Добавляем escapeHtml если не определена
-if (typeof escapeHtml === 'undefined') {
-    window.escapeHtml = function(text) {
-        if (!text) return '';
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    };
-}
-
-// Настройка обработчиков
 document.addEventListener('DOMContentLoaded', () => {
-    loadProfile();
-    
-    const editBtn = document.getElementById('edit-profile-btn');
-    if (editBtn) {
-        editBtn.onclick = editProfile;
-    }
-    
-    // Закрытие модального окна при клике вне его
-    const modal = document.getElementById('edit-modal');
-    if (modal) {
-        modal.onclick = function(e) {
-            if (e.target === modal) closeModal();
-        };
+    const user = getCurrentUser();
+    if (user) {
+        loadProfile();
+        
+        const editBtn = document.getElementById('edit-profile-btn');
+        if (editBtn) {
+            editBtn.onclick = editProfile;
+        }
+        
+        const modal = document.getElementById('edit-modal');
+        if (modal) {
+            modal.onclick = function(e) {
+                if (e.target === modal) closeModal();
+            };
+        }
+    } else {
+        window.location.href = 'index.html';
     }
 });
