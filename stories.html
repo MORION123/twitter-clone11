@@ -2,10 +2,14 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
     <title>Instagram Clone - Истории</title>
     <link rel="stylesheet" href="css/style.css">
     <link id="theme-style" rel="stylesheet" href="css/dark-theme.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Instagram Clone">
     <style>
         .story-viewer {
             position: fixed;
@@ -80,34 +84,3 @@
             top: 0;
             bottom: 0;
             width: 50%;
-            cursor: pointer;
-            z-index: 15;
-        }
-        .story-tap-left {
-            left: 0;
-        }
-        .story-tap-right {
-            right: 0;
-        }
-    </style>
-</head>
-<body>
-    <div class="story-viewer" id="story-viewer">
-        <div class="story-progress" id="story-progress"></div>
-        <div class="story-header">
-            <div class="avatar-small" id="story-avatar"></div>
-            <div>
-                <div><strong id="story-username"></strong></div>
-                <div style="font-size: 12px;" id="story-time"></div>
-            </div>
-        </div>
-        <div class="story-tap-area story-tap-left" onclick="prevStory()"></div>
-        <div class="story-tap-area story-tap-right" onclick="nextStory()"></div>
-        <button class="story-close" onclick="closeStories()">✕</button>
-        <div class="story-content" id="story-content"></div>
-    </div>
-    
-    <script src="js/storage.js"></script>
-    <script src="js/stories.js"></script>
-</body>
-</html>
