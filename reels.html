@@ -110,7 +110,6 @@
     
     <button class="create-reel-btn" onclick="openCreateReelModal()">+</button>
     
-    <!-- Модальное окно создания Reels -->
     <div id="create-reel-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -175,5 +174,10 @@
     <script src="js/app.js"></script>
     <script src="js/reels.js"></script>
     <script src="js/theme.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').catch(console.log);
+        }
+    </script>
 </body>
 </html>
