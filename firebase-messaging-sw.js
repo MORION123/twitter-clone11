@@ -15,10 +15,12 @@ const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
     console.log('Background message:', payload);
-    const notificationTitle = payload.notification.title;
+    const notificationTitle = payload.notification?.title || 'Instagram Clone';
     const notificationOptions = {
-        body: payload.notification.body,
-        icon: '/icon-180.png'
+        body: payload.notification?.body || 'У вас новое уведомление',
+        icon: '/icon-180.png',
+        badge: '/icon-180.png',
+        data: payload.data
     };
     self.registration.showNotification(notificationTitle, notificationOptions);
 });
