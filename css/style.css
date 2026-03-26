@@ -10,8 +10,11 @@ body {
     transition: background-color 0.3s, color 0.3s;
     padding-bottom: 70px;
     -webkit-font-smoothing: antialiased;
+    /* Для iPhone safe area */
+    padding-top: env(safe-area-inset-top);
 }
 
+/* Навигация с учётом safe area */
 .navbar {
     position: fixed;
     top: 0;
@@ -20,6 +23,9 @@ body {
     border-bottom: 1px solid;
     padding: 12px 16px;
     z-index: 100;
+    transition: background-color 0.3s;
+    /* Отступ для статус-бара iPhone */
+    padding-top: calc(12px + env(safe-area-inset-top));
 }
 
 .nav-container {
@@ -64,8 +70,9 @@ body {
     align-items: center;
 }
 
+/* Контейнер историй с отступом от навигации */
 .stories-container {
-    margin-top: 65px;
+    margin-top: calc(65px + env(safe-area-inset-top));
     padding: 12px 16px;
     border-bottom: 1px solid;
     overflow-x: auto;
@@ -122,6 +129,7 @@ body {
     white-space: nowrap;
 }
 
+/* Лента */
 .feed-container {
     max-width: 100%;
     margin: 0 auto;
@@ -234,6 +242,7 @@ body {
     text-transform: uppercase;
 }
 
+/* Пустая лента с рекомендациями */
 .empty-feed {
     text-align: center;
     padding: 40px 20px;
@@ -270,9 +279,10 @@ body {
     cursor: pointer;
 }
 
+/* Профиль */
 .profile-container {
     max-width: 100%;
-    margin: 65px auto 0;
+    margin-top: calc(65px + env(safe-area-inset-top));
     padding: 0;
 }
 
@@ -390,6 +400,7 @@ body {
     object-fit: cover;
 }
 
+/* Нижняя навигация */
 .bottom-nav {
     position: fixed;
     bottom: 0;
@@ -399,6 +410,7 @@ body {
     justify-content: space-around;
     align-items: center;
     padding: 10px 20px;
+    padding-bottom: calc(10px + env(safe-area-inset-bottom));
     border-top: 1px solid;
     backdrop-filter: blur(10px);
     z-index: 100;
@@ -421,6 +433,7 @@ body {
     color: #0095f6;
 }
 
+/* Модальные окна */
 .modal {
     display: none;
     position: fixed;
@@ -462,6 +475,7 @@ body {
     padding: 8px;
 }
 
+/* Форма создания поста */
 .post-input-area {
     padding: 16px;
 }
@@ -504,6 +518,7 @@ body {
     margin-top: 12px;
 }
 
+/* Комментарии */
 .comments-list {
     max-height: 400px;
     overflow-y: auto;
@@ -557,8 +572,9 @@ body {
     cursor: pointer;
 }
 
+/* Сообщения */
 .messages-container {
-    margin-top: 65px;
+    margin-top: calc(65px + env(safe-area-inset-top));
     padding: 0;
 }
 
@@ -593,8 +609,9 @@ body {
     flex-shrink: 0;
 }
 
+/* Поиск */
 .explore-container {
-    margin-top: 65px;
+    margin-top: calc(65px + env(safe-area-inset-top));
     padding: 16px;
 }
 
@@ -737,6 +754,7 @@ body {
     flex-shrink: 0;
 }
 
+/* Авторизация */
 .container {
     display: flex;
     justify-content: center;
@@ -823,6 +841,97 @@ body {
     display: none;
 }
 
+/* Чат */
+.chat-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: inherit;
+    padding-top: calc(65px + env(safe-area-inset-top));
+}
+
+.chat-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 12px 16px;
+    padding-top: calc(12px + env(safe-area-inset-top));
+    border-bottom: 1px solid;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    backdrop-filter: blur(10px);
+    z-index: 100;
+    background: inherit;
+}
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.message {
+    max-width: 75%;
+    padding: 10px 14px;
+    border-radius: 20px;
+    font-size: 14px;
+    word-wrap: break-word;
+}
+
+.message.sent {
+    align-self: flex-end;
+    background-color: #0095f6;
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+
+.message.received {
+    align-self: flex-start;
+    background-color: #efefef;
+    color: black;
+    border-bottom-left-radius: 4px;
+}
+
+.message-time {
+    font-size: 10px;
+    margin-top: 4px;
+    opacity: 0.7;
+}
+
+.chat-input {
+    padding: 12px 16px;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom));
+    border-top: 1px solid;
+    display: flex;
+    gap: 8px;
+    background: inherit;
+}
+
+.chat-input input {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid;
+    border-radius: 24px;
+    outline: none;
+    font-size: 14px;
+}
+
+.chat-input button {
+    padding: 0 20px;
+    background-color: #0095f6;
+    color: white;
+    border: none;
+    border-radius: 24px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Адаптация для маленьких экранов */
 @media (max-width: 480px) {
     .story-circle {
         width: 65px;
