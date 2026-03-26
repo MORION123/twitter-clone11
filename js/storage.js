@@ -5,7 +5,9 @@ const STORAGE_KEYS = {
     MESSAGES: 'instagram_messages',
     SAVED_POSTS: 'instagram_saved',
     CURRENT_USER: 'instagram_current_user',
-    THEME: 'instagram_theme'
+    THEME: 'instagram_theme',
+    NOTIFICATIONS: 'instagram_notifications',
+    REELS: 'instagram_reels'
 };
 
 const BOT_ACCOUNTS = [
@@ -55,10 +57,10 @@ function initStorage() {
             content: post.content,
             image: null,
             video: null,
+            location: null,
             timestamp: now - (index * 3600000),
             likes: [],
-            comments: [],
-            location: ''
+            comments: []
         }));
         localStorage.setItem(STORAGE_KEYS.POSTS, JSON.stringify(posts));
     }
@@ -66,6 +68,8 @@ function initStorage() {
     if (!localStorage.getItem(STORAGE_KEYS.STORIES)) localStorage.setItem(STORAGE_KEYS.STORIES, JSON.stringify([]));
     if (!localStorage.getItem(STORAGE_KEYS.MESSAGES)) localStorage.setItem(STORAGE_KEYS.MESSAGES, JSON.stringify([]));
     if (!localStorage.getItem(STORAGE_KEYS.SAVED_POSTS)) localStorage.setItem(STORAGE_KEYS.SAVED_POSTS, JSON.stringify({}));
+    if (!localStorage.getItem(STORAGE_KEYS.NOTIFICATIONS)) localStorage.setItem(STORAGE_KEYS.NOTIFICATIONS, JSON.stringify([]));
+    if (!localStorage.getItem(STORAGE_KEYS.REELS)) localStorage.setItem(STORAGE_KEYS.REELS, JSON.stringify([]));
 }
 
 function getUsers() { return JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS)) || []; }
@@ -145,5 +149,35 @@ function toggleSavePost(userId, postId) {
     return index === -1;
 }
 function isPostSaved(userId, postId) { return getSavedPosts(userId).includes(postId); }
+
+// Уведомления
+function addNotification(userId, notification) {
+    const notifications = JSON.parse(localStorage.getItem(STORAGE_KEYS.NOTIFICATIONS)) || [];
+    notifications.push({
+        id: Date.now().toString(),
+        userId: userId,
+        ...notification,
+        read: false,
+        timestamp: Date.now()
+    });
+    localStorage.setItem(STORAGE_KEYS.NOTIFICATIONS, JSON.stringify(notifications));
+    
+    // Отправляем push-уведомление если есть Firebase
+    if (typeof sendPushNotification === 'function') {
+        sendPushNotification(userId, notification);
+    }
+}
+function getUserNotifications(userId) {
+    const notifications = JSON.parse(localStorage.getItem(STORAGE_KEYS.NOTIFICATIONS)) || [];
+    return notifications.filter(n => n.userId === userId).sort((a, b) => b.timestamp - a.timestamp);
+}
+function markNotificationRead(notificationId) {
+    const notifications = JSON.parse(localStorage.getItem(STORAGE_KEYS.NOTIFICATIONS)) || [];
+    const index = notifications.findIndex(n => n.id === notificationId);
+    if (index !== -1) {
+        notifications[index].read = true;
+        localStorage.setItem(STORAGE_KEYS.NOTIFICATIONS, JSON.stringify(notifications));
+    }
+}
 
 initStorage();
