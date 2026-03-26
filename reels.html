@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>Instagram Clone - Reels</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link id="theme-style" rel="stylesheet" href="css/light-theme.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="/icon-180.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Instagram Clone">
+    <style>
+        .reels-container {
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            -webkit-overflow-scrolling: touch;
+        }
+        .reel-item {
+            height: 100vh;
+            scroll-snap-align: start;
+            position: relative;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+        .reel-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .reel-overlay {
+            position: relative;
+            z-index: 10;
+            padding: 20px;
+            background: linear-gradient(0deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%);
+            color: white;
+        }
+        .reel-actions {
+            position: absolute;
+            right: 16px;
+            bottom: 100px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            z-index: 20;
+        }
+        .reel-action-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: white;
+            text-align: center;
+        }
+        .reel-action-btn span {
+            display: block;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+        .reel-music {
+            position: absolute;
+            bottom: 20px;
+            left: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            z-index: 20;
+            color: white;
+        }
+        .create-reel-btn {
+            position: fixed;
+            bottom: 80px;
+            right: 16px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: #0095f6;
+            border: none;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+            z-index: 30;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo-instagram-nav">
+                <h1>📸 Reels</h1>
+            </div>
+            <div class="nav-icons">
+                <button class="nav-icon theme-switch" onclick="toggleTheme()">🌙</button>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="reels-container" id="reels-container">
+        <div id="reels-list"></div>
+    </div>
+    
+    <button class="create-reel-btn" onclick="openCreateReelModal()">+</button>
+    
+    <!-- Модальное окно создания Reels -->
+    <div id="create-reel-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Создать Reels</h3>
+                <button onclick="closeCreateReelModal()" class="close-modal">&times;</button>
+            </div>
+            <div class="post-input-area">
+                <div class="media-upload">
+                    <button class="btn-image" onclick="document.getElementById('reel-video-input').click()">🎥 Выбрать видео</button>
+                    <input type="file" id="reel-video-input" accept="video/*" style="display: none">
+                </div>
+                <div id="reel-preview"></div>
+                <textarea id="reel-caption" placeholder="Описание..." rows="2"></textarea>
+                <input type="text" id="reel-music" placeholder="Музыка (опционально)">
+                <button class="btn-post" onclick="createReel()">Опубликовать Reels</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bottom-nav">
+        <button class="bottom-nav-item" onclick="window.location.href='feed.html'">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9L12 3L21 9L12 15L3 9Z"/>
+                <path d="M3 15L12 21L21 15"/>
+            </svg>
+        </button>
+        <button class="bottom-nav-item" onclick="window.location.href='explore.html'">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M21 12C21 16.97 16.97 21 12 21C7.03 21 3 16.97 3 12C3 7.03 7.03 3 12 3"/>
+                <path d="M12 3L21 12"/>
+            </svg>
+        </button>
+        <button class="bottom-nav-item active" onclick="window.location.href='reels.html'">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="2" width="20" height="20" rx="2"/>
+                <path d="M10 8L16 12L10 16V8Z"/>
+            </svg>
+        </button>
+        <button class="bottom-nav-item" onclick="window.location.href='messages.html'">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 16V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V16"/>
+                <path d="M17 8L12 13L7 8"/>
+                <path d="M12 3V13"/>
+            </svg>
+        </button>
+        <button class="bottom-nav-item" onclick="window.location.href='profile.html'">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21V19C20 16.8 18.2 15 16 15H8C5.8 15 4 16.8 4 19V21"/>
+                <circle cx="12" cy="7" r="4"/>
+            </svg>
+        </button>
+    </div>
+    
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-messaging.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/reels.js"></script>
+    <script src="js/theme.js"></script>
+</body>
+</html>
