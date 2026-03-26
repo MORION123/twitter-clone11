@@ -1,7 +1,7 @@
 // Переключение темы
 
 function initTheme() {
-    const savedTheme = localStorage.getItem(STORAGE_KEYS.THEME) || 'dark';
+    const savedTheme = localStorage.getItem(STORAGE_KEYS.THEME) || 'light';
     setTheme(savedTheme);
 }
 
@@ -18,19 +18,18 @@ function setTheme(theme) {
     }
     localStorage.setItem(STORAGE_KEYS.THEME, theme);
     
-    // Обновляем иконку кнопки
-    const themeBtns = document.querySelectorAll('.theme-switch, .theme-btn');
+    const themeBtns = document.querySelectorAll('.theme-switch');
     themeBtns.forEach(btn => {
         btn.textContent = theme === 'light' ? '🌙' : '☀️';
     });
 }
 
 function toggleTheme() {
-    const currentTheme = localStorage.getItem(STORAGE_KEYS.THEME) || 'dark';
+    const currentTheme = localStorage.getItem(STORAGE_KEYS.THEME) || 'light';
     const newTheme = currentTheme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     initTheme();
-});
+});;
