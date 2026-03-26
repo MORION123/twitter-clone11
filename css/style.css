@@ -1,4 +1,3 @@
-/* Мобильная версия Instagram Clone */
 * {
     margin: 0;
     padding: 0;
@@ -11,10 +10,8 @@ body {
     transition: background-color 0.3s, color 0.3s;
     padding-bottom: 70px;
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
 }
 
-/* Верхняя навигация */
 .navbar {
     position: fixed;
     top: 0;
@@ -23,7 +20,6 @@ body {
     border-bottom: 1px solid;
     padding: 12px 16px;
     z-index: 100;
-    transition: background-color 0.3s;
 }
 
 .nav-container {
@@ -40,7 +36,6 @@ body {
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    letter-spacing: -0.5px;
 }
 
 .nav-icons {
@@ -59,7 +54,16 @@ body {
     justify-content: center;
 }
 
-/* Истории */
+.back-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+}
+
 .stories-container {
     margin-top: 65px;
     padding: 12px 16px;
@@ -118,7 +122,6 @@ body {
     white-space: nowrap;
 }
 
-/* Лента */
 .feed-container {
     max-width: 100%;
     margin: 0 auto;
@@ -231,7 +234,6 @@ body {
     text-transform: uppercase;
 }
 
-/* Пустая лента с рекомендациями */
 .empty-feed {
     text-align: center;
     padding: 40px 20px;
@@ -268,7 +270,6 @@ body {
     cursor: pointer;
 }
 
-/* Профиль */
 .profile-container {
     max-width: 100%;
     margin: 65px auto 0;
@@ -344,7 +345,6 @@ body {
     width: 100%;
 }
 
-/* Вкладки профиля */
 .profile-tabs-instagram {
     display: flex;
     justify-content: space-around;
@@ -370,7 +370,6 @@ body {
     margin-top: -1px;
 }
 
-/* Сетка постов */
 .posts-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -391,7 +390,6 @@ body {
     object-fit: cover;
 }
 
-/* Нижняя навигация */
 .bottom-nav {
     position: fixed;
     bottom: 0;
@@ -423,7 +421,6 @@ body {
     color: #0095f6;
 }
 
-/* Модальные окна */
 .modal {
     display: none;
     position: fixed;
@@ -465,7 +462,6 @@ body {
     padding: 8px;
 }
 
-/* Форма создания поста */
 .post-input-area {
     padding: 16px;
 }
@@ -508,7 +504,6 @@ body {
     margin-top: 12px;
 }
 
-/* Комментарии */
 .comments-list {
     max-height: 400px;
     overflow-y: auto;
@@ -562,7 +557,6 @@ body {
     cursor: pointer;
 }
 
-/* Сообщения */
 .messages-container {
     margin-top: 65px;
     padding: 0;
@@ -599,105 +593,150 @@ body {
     flex-shrink: 0;
 }
 
-/* Чат */
-.chat-container {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    background: inherit;
-    padding-top: 65px;
+.explore-container {
+    margin-top: 65px;
+    padding: 16px;
 }
 
-.chat-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    padding: 12px 16px;
-    border-bottom: 1px solid;
+.search-bar-explore {
+    margin-bottom: 20px;
+}
+
+.search-bar-explore input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid;
+    border-radius: 12px;
+    font-size: 16px;
+    background: transparent;
+}
+
+.explore-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    white-space: nowrap;
+}
+
+.explore-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.explore-tab {
+    padding: 8px 16px;
+    background: none;
+    border: 1px solid;
+    border-radius: 20px;
+    font-size: 14px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.explore-tab.active {
+    background-color: #0095f6;
+    border-color: #0095f6;
+    color: white;
+}
+
+.users-list-explore {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.user-card {
     display: flex;
     align-items: center;
     gap: 12px;
-    backdrop-filter: blur(10px);
-    z-index: 100;
-    background: inherit;
+    padding: 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
 }
 
-.back-btn {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    padding: 8px;
+.user-card:active {
+    background-color: rgba(0, 149, 246, 0.1);
+}
+
+.user-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
     display: flex;
     align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+    background-color: #262626;
 }
 
-.chat-messages {
+.user-info {
     flex: 1;
-    overflow-y: auto;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
 }
 
-.message {
-    max-width: 75%;
-    padding: 10px 14px;
-    border-radius: 20px;
-    font-size: 14px;
-    word-wrap: break-word;
+.user-name {
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 4px;
 }
 
-.message.sent {
-    align-self: flex-end;
-    background-color: #0095f6;
-    color: white;
-    border-bottom-right-radius: 4px;
-}
-
-.message.received {
-    align-self: flex-start;
-    background-color: #efefef;
-    color: black;
-    border-bottom-left-radius: 4px;
-}
-
-.message-time {
-    font-size: 10px;
-    margin-top: 4px;
+.user-bio {
+    font-size: 13px;
     opacity: 0.7;
+    margin-bottom: 4px;
 }
 
-.chat-input {
-    padding: 12px 16px;
-    border-top: 1px solid;
+.user-stats {
     display: flex;
-    gap: 8px;
-    background: inherit;
+    gap: 12px;
+    font-size: 12px;
+    opacity: 0.6;
 }
 
-.chat-input input {
-    flex: 1;
-    padding: 12px;
-    border: 1px solid;
-    border-radius: 24px;
-    outline: none;
-    font-size: 14px;
-}
-
-.chat-input button {
-    padding: 0 20px;
+.follow-btn {
+    padding: 8px 16px;
     background-color: #0095f6;
     color: white;
     border: none;
-    border-radius: 24px;
-    font-weight: bold;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 13px;
     cursor: pointer;
 }
 
-/* Авторизация */
+.follow-btn.following {
+    background-color: transparent;
+    border: 1px solid;
+    color: inherit;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.empty-state p:first-child {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.avatar-small {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
 .container {
     display: flex;
     justify-content: center;
@@ -780,47 +819,27 @@ body {
     font-size: 13px;
 }
 
-/* Общие классы */
-.avatar-small {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background-size: cover;
-    background-position: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    flex-shrink: 0;
-}
-
 .hidden {
     display: none;
 }
 
-/* Адаптация для маленьких экранов */
 @media (max-width: 480px) {
     .story-circle {
         width: 65px;
     }
-    
     .story-ring {
         width: 65px;
         height: 65px;
     }
-    
     .profile-header-instagram {
         gap: 20px;
     }
-    
     .profile-stats-instagram {
         gap: 20px;
     }
-    
     .profile-stats-instagram strong {
         font-size: 16px;
     }
-    
     .profile-stats-instagram div {
         font-size: 12px;
     }
