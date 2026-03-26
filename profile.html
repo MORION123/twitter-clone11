@@ -181,4 +181,125 @@
                 if (isOwnProfile) {
                     editBtn.style.display = 'block';
                     editBtn.textContent = 'Редактировать профиль';
-                    editBtn.on
+                    editBtn.onclick = () => document.getElementById('edit-modal').style.display = 'flex';
+                } else {
+                    editBtn.style.display = 'block';
+                    editBtn.textContent = 'Подписаться';
+                    editBtn.onclick = () => followUser(profileData.id);
+                }
+            }
+            
+            // Загружаем посты
+            const feedResult = await window.supabase.getFeed();
+            if (feedResult.success) {
+                userPosts = feedResult.posts.filter(p => p.userId === profileData.id);
+                document.getElementById('posts-count').textContent = userPosts.length;
+                showUserPosts();
+            }
+        }
+        
+        function showUserPosts() {
+            const postsGrid = document.getElementById('user-posts-grid');
+            const savedGrid = document.getElementById('saved-posts-grid');
+            const reelsGrid = document.getElementById('user-reels-grid');
+            const tabs = document.querySelectorAll('.profile-tab');
+            
+            postsGrid.style.display = 'grid';
+            savedGrid.style.display = 'none';
+            reelsGrid.style.display = 'none';
+            tabs[0].classList.add('active');
+            tabs[1].classList.remove('active');
+            tabs[2].classList.remove('active');
+            
+            if (userPosts.length === 0) {
+                postsGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px;"><p>📸</p><p><strong>Нет публикаций</strong></p></div>`;
+                return;
+            }
+            
+            postsGrid.innerHTML = userPosts.map(post => `
+                <div class="grid-post" onclick="openPostModal('${post.id}')">
+                    ${post.image ? `<img src="${post.image}" alt="Post">` : ''}
+                    ${post.video ? `<video src="${post.video}" style="width:100%;height:100%;object-fit:cover;"></video>` : ''}
+                </div>
+            `).join('');
+        }
+        
+        function showSavedPosts() {
+            alert('Сохраненные посты будут доступны в следующей версии');
+        }
+        
+        function showReelsTab() {
+            alert('Reels будут доступны в следующей версии');
+        }
+        
+        function openPostModal(postId) {
+            alert('Просмотр поста будет доступен в следующей версии');
+        }
+        
+        async function followUser(userId) {
+            const result = await window.supabase.followUser(userId);
+            if (result.success) {
+                alert('Подписка оформлена!');
+                loadProfile();
+            }
+        }
+        
+        async function uploadAvatar() {
+            const fileInput = document.getElementById('avatar-upload');
+            const file = fileInput.files[0];
+            if (!file) return;
+            
+            const user = window.supabase.getCurrentUser();
+            const result = await window.supabase.uploadAvatar(file, user.id);
+            
+            if (result.success) {
+                await window.supabase.updateUserProfile(user.id, { avatar: result.url });
+                alert('Аватар обновлен!');
+                loadProfile();
+            }
+        }
+        
+        async function saveProfile() {
+            const newBio = document.getElementById('edit-bio').value;
+            const user = window.supabase.getCurrentUser();
+            const result = await window.supabase.updateUserProfile(user.id, { bio: newBio });
+            
+            if (result.success) {
+                alert('Профиль обновлен!');
+                closeModal();
+                loadProfile();
+            }
+        }
+        
+        async function exportUserData() {
+            const result = await window.supabase.exportUserData();
+            if (result.success) {
+                alert('Данные экспортированы!');
+            } else {
+                alert('Ошибка экспорта: ' + result.error);
+            }
+        }
+        
+        function closeModal() {
+            document.getElementById('edit-modal').style.display = 'none';
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = window.supabase.getCurrentUser();
+            if (!user) {
+                window.location.href = 'index.html';
+                return;
+            }
+            loadProfile();
+            
+            const avatarUpload = document.getElementById('avatar-upload');
+            if (avatarUpload) avatarUpload.addEventListener('change', uploadAvatar);
+        });
+        
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').catch(console.log);
+        }
+    </script>
+    <script src="js/theme.js"></script>
+</body>
+</html>
