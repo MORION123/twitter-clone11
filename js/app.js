@@ -60,7 +60,6 @@ function register() {
     window.location.href = 'feed.html';
 }
 
-// Настройка кнопки выхода (добавляем обработчик после загрузки страницы)
 function setupLogoutButton() {
     const logoutBtn = document.getElementById('logoutBtn');
     const logoutBtnProfile = document.getElementById('logoutBtnProfile');
@@ -82,13 +81,11 @@ function setupLogoutButton() {
     }
 }
 
-// Выход из аккаунта
 function logout() {
     localStorage.removeItem('twitter_current_user');
     window.location.href = 'index.html';
 }
 
-// Проверка авторизации
 function checkAuth() {
     const user = getCurrentUser();
     if (!user && (window.location.pathname.includes('feed.html') || window.location.pathname.includes('profile.html'))) {
@@ -97,7 +94,6 @@ function checkAuth() {
     return user;
 }
 
-// Обновление информации о пользователе на странице
 function updateUserDisplay() {
     const user = getCurrentUser();
     const userElements = document.querySelectorAll('#current-user');
@@ -106,10 +102,66 @@ function updateUserDisplay() {
     });
 }
 
-// Инициализация
+function displayAvatar(element, user, size = 'small') {
+    if (user.avatarData) {
+        element.style.backgroundImage = `url(${user.avatarData})`;
+        element.style.backgroundSize = 'cover';
+        element.style.backgroundPosition = 'center';
+        element.textContent = '';
+    } else {
+        element.style.backgroundImage = '';
+        element.textContent = user.avatar || user.username[0].toUpperCase();
+    }
+}
+
+function uploadAvatar() {
+    const fileInput = document.getElementById('avatar-upload');
+    const file = fileInput.files[0];
+    
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const user = getCurrentUser();
+            updateUser(user.id, { avatarData: e.target.result });
+            
+            // Обновляем все аватары на странице
+            updateUserDisplay();
+            if (typeof updateUserStats === 'function') {
+                updateUserStats();
+            }
+            
+            const profileAvatar = document.getElementById('profile-avatar');
+            const postAvatar = document.getElementById('post-avatar');
+            if (profileAvatar) displayAvatar(profileAvatar, user, 'large');
+            if (postAvatar) displayAvatar(postAvatar, user, 'small');
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function uploadAvatarFromProfile() {
+    const fileInput = document.getElementById('avatar-upload-profile');
+    const file = fileInput.files[0];
+    
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const user = getCurrentUser();
+            updateUser(user.id, { avatarData: e.target.result });
+            
+            const profileAvatarLarge = document.getElementById('profile-avatar-large');
+            if (profileAvatarLarge) displayAvatar(profileAvatarLarge, user, 'large');
+            
+            if (typeof updateUserStats === 'function') {
+                updateUserStats();
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
 initStorage();
 
-// Настройка после загрузки страницы
 document.addEventListener('DOMContentLoaded', () => {
     setupLogoutButton();
     updateUserDisplay();
