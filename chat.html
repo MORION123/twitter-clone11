@@ -25,6 +25,7 @@
             left: 0;
             right: 0;
             padding: 12px 16px;
+            padding-top: calc(12px + env(safe-area-inset-top));
             border-bottom: 1px solid;
             display: flex;
             align-items: center;
@@ -76,6 +77,7 @@
         }
         .chat-input {
             padding: 12px 16px;
+            padding-bottom: calc(12px + env(safe-area-inset-bottom));
             border-top: 1px solid;
             display: flex;
             gap: 8px;
@@ -111,6 +113,9 @@
             flex-shrink: 0;
         }
     </style>
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
 </head>
 <body>
     <div class="chat-container">
@@ -130,14 +135,114 @@
         </div>
     </div>
     
-    <script src="js/storage.js"></script>
-    <script src="js/app.js"></script>
-    <script src="js/messages.js"></script>
-    <script src="js/theme.js"></script>
     <script>
+        let currentChatUser = null;
+        let messageInterval = null;
+        
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diff = now - date;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(minutes / 60);
+            const days = Math.floor(hours / 24);
+            if (minutes < 1) return 'только что';
+            if (minutes < 60) return `${minutes} мин назад`;
+            if (hours < 24) return `${hours} ч назад`;
+            if (days < 7) return `${days} дн назад`;
+            return date.toLocaleDateString();
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        async function loadChat() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const username = urlParams.get('user');
+            const currentUser = window.supabase.getCurrentUser();
+            
+            if (!currentUser) {
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            const profileResult = await window.supabase.getUserProfile(username);
+            if (!profileResult.success) {
+                window.location.href = 'messages.html';
+                return;
+            }
+            
+            currentChatUser = profileResult.user;
+            
+            document.getElementById('chat-username').textContent = currentChatUser.username;
+            const avatarEl = document.getElementById('chat-avatar');
+            if (currentChatUser.avatar) {
+                avatarEl.style.backgroundImage = `url('${currentChatUser.avatar}')`;
+                avatarEl.style.backgroundSize = 'cover';
+                avatarEl.textContent = '';
+            } else {
+                avatarEl.style.backgroundImage = '';
+                avatarEl.textContent = currentChatUser.username[0]?.toUpperCase() || '👤';
+            }
+            
+            await loadMessages();
+            startPolling();
+        }
+        
+        async function loadMessages() {
+            const currentUser = window.supabase.getCurrentUser();
+            if (!currentUser || !currentChatUser) return;
+            
+            const result = await window.supabase.getMessagesWith(currentChatUser.id);
+            const container = document.getElementById('chat-messages');
+            
+            if (result.success && result.messages.length > 0) {
+                container.innerHTML = result.messages.map(msg => {
+                    const isFromMe = msg.from_user_id === currentUser.id;
+                    return `
+                        <div class="message ${isFromMe ? 'sent' : 'received'}">
+                            ${escapeHtml(msg.content || '')}
+                            <div class="message-time">${formatTime(new Date(msg.created_at).getTime())}</div>
+                        </div>
+                    `;
+                }).join('');
+                container.scrollTop = container.scrollHeight;
+            } else {
+                container.innerHTML = '<div style="text-align: center; padding: 40px;">Нет сообщений. Напишите что-нибудь!</div>';
+            }
+        }
+        
+        async function sendMessage() {
+            const input = document.getElementById('message-input');
+            const text = input.value.trim();
+            if (!text || !currentChatUser) return;
+            
+            const result = await window.supabase.sendMessage(currentChatUser.id, text);
+            if (result.success) {
+                input.value = '';
+                await loadMessages();
+            }
+        }
+        
+        function startPolling() {
+            if (messageInterval) clearInterval(messageInterval);
+            messageInterval = setInterval(() => {
+                if (currentChatUser) loadMessages();
+            }, 3000);
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            loadChat();
+        });
+        
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/sw.js').catch(console.log);
         }
     </script>
+    <script src="js/theme.js"></script>
 </body>
 </html>
