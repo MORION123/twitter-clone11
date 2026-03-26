@@ -1,1 +1,141 @@
+/* Темная тема */
+body.dark-theme {
+    background-color: #000000;
+    color: #ffffff;
+}
 
+.dark-theme .navbar {
+    background-color: rgba(0, 0, 0, 0.95);
+    border-bottom-color: #2f3336;
+}
+
+.dark-theme .search-bar input {
+    background-color: #202327;
+    border-color: #202327;
+    color: #ffffff;
+}
+
+.dark-theme .search-bar input:focus {
+    border-color: #1d9bf0;
+    background-color: #000000;
+}
+
+.dark-theme .search-results {
+    background-color: #000000;
+    border: 1px solid #2f3336;
+}
+
+.dark-theme .search-result-item {
+    border-bottom: 1px solid #2f3336;
+}
+
+.dark-theme .search-result-item:hover {
+    background-color: #1a1c1f;
+}
+
+.dark-theme .nav-links a {
+    color: #ffffff;
+}
+
+.dark-theme .nav-links a:hover,
+.dark-theme .nav-links a.active {
+    background-color: #1d9bf0;
+}
+
+.dark-theme .theme-switch,
+.dark-theme .theme-btn {
+    background-color: #1d9bf0;
+    color: white;
+}
+
+.dark-theme .user-info {
+    color: #71767b;
+}
+
+.dark-theme .profile-card,
+.dark-theme .create-post,
+.dark-theme .post,
+.dark-theme .notifications,
+.dark-theme .trending,
+.dark-theme .suggestions,
+.dark-theme .profile-header,
+.dark-theme .auth-box,
+.dark-theme .modal-content {
+    background-color: #16181c;
+}
+
+.dark-theme .post-input-container textarea {
+    color: #ffffff;
+}
+
+.dark-theme .post-input-container textarea::placeholder {
+    color: #71767b;
+}
+
+.dark-theme .post-actions {
+    border-top-color: #2f3336;
+}
+
+.dark-theme .btn-image {
+    color: #71767b;
+}
+
+.dark-theme .btn-image:hover {
+    background-color: #1d9bf01a;
+}
+
+.dark-theme .btn-post {
+    background-color: #1d9bf0;
+    color: white;
+}
+
+.dark-theme .stats,
+.dark-theme .post-actions-bar {
+    border-top-color: #2f3336;
+}
+
+.dark-theme .action-btn {
+    color: #71767b;
+}
+
+.dark-theme .action-btn:hover {
+    background-color: #1d9bf01a;
+}
+
+.dark-theme .feed-tabs {
+    border-bottom-color: #2f3336;
+}
+
+.dark-theme .feed-tab {
+    color: #71767b;
+}
+
+.dark-theme .feed-tab.active {
+    color: #1d9bf0;
+}
+
+.dark-theme .trending-item:hover,
+.dark-theme .suggestion-item:hover {
+    background-color: #1a1c1f;
+}
+
+.dark-theme .auth-form input {
+    background-color: #000000;
+    border-color: #2f3336;
+    color: white;
+}
+
+.dark-theme .tab-btn {
+    color: #71767b;
+}
+
+.dark-theme .tab-btn.active {
+    background-color: #1d9bf0;
+    color: white;
+}
+
+.dark-theme .modal-content textarea {
+    background-color: #000000;
+    border-color: #2f3336;
+    color: white;
+}
