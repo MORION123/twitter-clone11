@@ -2,94 +2,119 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitter Clone - Лента</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Instagram Clone - Лента</title>
     <link rel="stylesheet" href="css/style.css">
     <link id="theme-style" rel="stylesheet" href="css/light-theme.css">
+    
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📸%3C/text%3E%3C/svg%3E">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Instagram Clone">
+    <meta name="theme-color" content="#ffffff">
 </head>
 <body>
+    <!-- Верхняя панель -->
     <nav class="navbar">
         <div class="nav-container">
-            <div class="logo">🐦 TwitterClone</div>
-            <div class="search-bar">
-                <input type="text" id="search-input" placeholder="Поиск постов и пользователей..." onkeyup="searchContent()">
-                <div id="search-results" class="search-results"></div>
+            <div class="logo-instagram-nav">
+                <h1>📸 Instagram</h1>
             </div>
-            <div class="nav-links">
-                <a href="feed.html" class="active">🏠 Лента</a>
-                <a href="profile.html">👤 Профиль</a>
-                <a href="#" id="logoutBtn">🚪 Выход</a>
-                <button onclick="toggleTheme()" class="theme-switch">🌙</button>
-            </div>
-            <div class="user-info">
-                <span id="current-user"></span>
+            <div class="nav-icons">
+                <button class="nav-icon" onclick="window.location.href='feed.html'">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 3L3 9L12 15L21 9L12 3Z" stroke="currentColor" stroke-width="2" fill="none"/>
+                        <path d="M3 15L12 21L21 15" stroke="currentColor" stroke-width="2" fill="none"/>
+                    </svg>
+                </button>
+                <button class="nav-icon" onclick="window.location.href='messages.html'">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M21 16V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V16" stroke="currentColor" stroke-width="2" fill="none"/>
+                        <path d="M17 8L12 13L7 8" stroke="currentColor" stroke-width="2" fill="none"/>
+                        <path d="M12 3V13" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                </button>
+                <button class="nav-icon" onclick="window.location.href='profile.html'">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M20 21V19C20 16.8 18.2 15 16 15H8C5.8 15 4 16.8 4 19V21" stroke="currentColor" stroke-width="2" fill="none"/>
+                        <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" fill="none"/>
+                    </svg>
+                </button>
+                <button class="nav-icon theme-switch" onclick="toggleTheme()">🌙</button>
             </div>
         </div>
     </nav>
     
-    <div class="main-container">
-        <aside class="sidebar">
-            <div class="profile-card">
-                <div id="profile-avatar" class="avatar-large" onclick="document.getElementById('avatar-upload').click()"></div>
-                <input type="file" id="avatar-upload" accept="image/*" style="display: none" onchange="uploadAvatar()">
-                <h3 id="profile-name"></h3>
-                <p id="profile-bio"></p>
-                <div class="stats">
-                    <div><strong id="posts-count">0</strong> постов</div>
-                    <div><strong id="followers-count">0</strong> подписчиков</div>
-                    <div><strong id="following-count">0</strong> подписок</div>
-                </div>
-            </div>
-            
-            <div class="notifications">
-                <h3>🔔 Уведомления</h3>
-                <div id="notifications-list"></div>
-            </div>
-        </aside>
-        
-        <main class="main-content">
-            <div class="create-post">
-                <div class="post-input-container">
-                    <div id="post-avatar" class="avatar-small"></div>
-                    <textarea id="post-content" placeholder="Что нового?" rows="3"></textarea>
-                </div>
-                <div class="post-actions">
-                    <button class="btn-image" onclick="document.getElementById('post-image').click()">📷</button>
-                    <input type="file" id="post-image" accept="image/*" style="display: none">
-                    <button class="btn-post" onclick="createPost()">Опубликовать</button>
-                </div>
-                <div id="post-preview"></div>
-            </div>
-            
-            <div class="feed-tabs">
-                <button class="feed-tab active" onclick="showFeed('following')">Для вас</button>
-                <button class="feed-tab" onclick="showFeed('global')">Глобальная</button>
-            </div>
-            
-            <div id="feed" class="feed"></div>
-        </main>
-        
-        <aside class="sidebar-right">
-            <div class="trending">
-                <h3>📈 Актуальные темы</h3>
-                <div id="trending-list"></div>
-            </div>
-            
-            <div class="suggestions">
-                <h3>👥 Кого читать</h3>
-                <div id="suggestions-list"></div>
-            </div>
-        </aside>
+    <!-- Истории (горизонтальный скролл) -->
+    <div class="stories-container">
+        <div class="stories-scroll" id="stories-list">
+            <!-- Сюда будут загружаться истории -->
+        </div>
     </div>
     
-    <!-- Модальное окно для ответов -->
-    <div id="reply-modal" class="modal">
+    <!-- Основная лента -->
+    <div class="feed-container" id="feed">
+        <!-- Посты загружаются через JS -->
+    </div>
+    
+    <!-- Нижняя панель навигации (для мобильных) -->
+    <div class="bottom-nav">
+        <button class="bottom-nav-item active" onclick="window.location.href='feed.html'">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M3 9L12 3L21 9L12 15L3 9Z" stroke="currentColor" stroke-width="2" fill="none"/>
+                <path d="M3 15L12 21L21 15" stroke="currentColor" stroke-width="2" fill="none"/>
+            </svg>
+        </button>
+        <button class="bottom-nav-item" onclick="window.location.href='messages.html'">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M21 16V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V16" stroke="currentColor" stroke-width="2" fill="none"/>
+                <path d="M17 8L12 13L7 8" stroke="currentColor" stroke-width="2" fill="none"/>
+                <path d="M12 3V13" stroke="currentColor" stroke-width="2"/>
+            </svg>
+        </button>
+        <button class="bottom-nav-item" onclick="openCreatePostModal()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M12 4V20M4 12H20" stroke="currentColor" stroke-width="2"/>
+            </svg>
+        </button>
+        <button class="bottom-nav-item" onclick="window.location.href='profile.html'">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M20 21V19C20 16.8 18.2 15 16 15H8C5.8 15 4 16.8 4 19V21" stroke="currentColor" stroke-width="2" fill="none"/>
+                <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" fill="none"/>
+            </svg>
+        </button>
+    </div>
+    
+    <!-- Модальное окно создания поста -->
+    <div id="create-post-modal" class="modal">
         <div class="modal-content">
-            <h3>Ответить</h3>
-            <textarea id="reply-content" placeholder="Ваш ответ..." rows="3"></textarea>
-            <div class="modal-buttons">
-                <button onclick="submitReply()">Ответить</button>
-                <button onclick="closeReplyModal()">Отмена</button>
+            <div class="modal-header">
+                <h3>Создать публикацию</h3>
+                <button onclick="closeCreatePostModal()" class="close-modal">&times;</button>
+            </div>
+            <div class="post-input-area">
+                <textarea id="new-post-content" placeholder="Напишите подпись..." rows="3"></textarea>
+                <div class="media-upload">
+                    <button class="btn-image" onclick="document.getElementById('new-post-image').click()">📷 Добавить фото/видео</button>
+                    <input type="file" id="new-post-image" accept="image/*,video/*" style="display: none">
+                </div>
+                <div id="new-post-preview"></div>
+                <button class="btn-post" onclick="createPostFromModal()">Опубликовать</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Модальное окно просмотра комментариев -->
+    <div id="comments-modal" class="modal">
+        <div class="modal-content modal-comments">
+            <div class="modal-header">
+                <h3>Комментарии</h3>
+                <button onclick="closeCommentsModal()" class="close-modal">&times;</button>
+            </div>
+            <div id="comments-list" class="comments-list"></div>
+            <div class="add-comment">
+                <textarea id="new-comment" placeholder="Добавьте комментарий..." rows="2"></textarea>
+                <button onclick="submitComment()">Отправить</button>
             </div>
         </div>
     </div>
@@ -97,7 +122,7 @@
     <script src="js/storage.js"></script>
     <script src="js/app.js"></script>
     <script src="js/feed.js"></script>
-    <script src="js/notifications.js"></script>
+    <script src="js/stories.js"></script>
     <script src="js/theme.js"></script>
 </body>
 </html>
