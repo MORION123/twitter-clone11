@@ -1,1 +1,113 @@
-
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Instagram Clone - Истории</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link id="theme-style" rel="stylesheet" href="css/dark-theme.css">
+    <style>
+        .story-viewer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+        }
+        .story-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0) 100%);
+            z-index: 10;
+        }
+        .story-progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            gap: 4px;
+            padding: 8px;
+            z-index: 10;
+        }
+        .story-progress-bar {
+            flex: 1;
+            height: 2px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .story-progress-fill {
+            height: 100%;
+            background: white;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+        .story-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .story-content img, .story-content video {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        .story-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+            z-index: 20;
+        }
+        .story-tap-area {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 50%;
+            cursor: pointer;
+            z-index: 15;
+        }
+        .story-tap-left {
+            left: 0;
+        }
+        .story-tap-right {
+            right: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="story-viewer" id="story-viewer">
+        <div class="story-progress" id="story-progress"></div>
+        <div class="story-header">
+            <div class="avatar-small" id="story-avatar"></div>
+            <div>
+                <div><strong id="story-username"></strong></div>
+                <div style="font-size: 12px;" id="story-time"></div>
+            </div>
+        </div>
+        <div class="story-tap-area story-tap-left" onclick="prevStory()"></div>
+        <div class="story-tap-area story-tap-right" onclick="nextStory()"></div>
+        <button class="story-close" onclick="closeStories()">✕</button>
+        <div class="story-content" id="story-content"></div>
+    </div>
+    
+    <script src="js/storage.js"></script>
+    <script src="js/stories.js"></script>
+</body>
+</html>
